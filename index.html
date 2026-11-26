@@ -1,0 +1,1655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FabChalk — Electrical digital construction</title>
+<meta name="description" content="FabChalk is electrical digital construction for electrical contractors: coordination, install drawings, prefabrication, constructability, standards, automation and data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1B91FF; --ice:#E8F4FF; --black:#04060A; --ink:#0A0F18; --panel:#070B13;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Instrument Serif",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1); --io:cubic-bezier(.7,0,.2,1); --gut:clamp(18px,4.4vw,64px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:clip}
+body{background:var(--black);color:#fff;font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.intro-on{overflow:hidden}
+/* film grain over everything, as in the colour reference */
+body::after{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.5;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 1.3 0 0 0 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+svg{display:block;max-width:100%}
+ol,ul{list-style:none}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+::selection{background:var(--blue);color:#fff}
+
+/* ---------- surfaces: night shift, tint rise, blue haze ---------- */
+.s{position:relative;padding:clamp(84px,10vw,150px) 0 calc(clamp(84px,10vw,150px) + 44px);margin-top:-44px;border-radius:44px 44px 0 0;
+  --fg:#fff;--mute:rgba(255,255,255,.66);--line:rgba(255,255,255,.13);--card:rgba(255,255,255,.05);--cardh:rgba(255,255,255,.08);--here:var(--black);--bp:var(--ice);--acc:var(--blue);
+  background:var(--black);color:var(--fg)}
+.page>.s:first-child{margin-top:0;border-radius:0}
+.s-night{background:radial-gradient(120% 85% at 78% 118%,#1B91FF 0%,rgba(27,145,255,.42) 28%,rgba(27,145,255,0) 62%),var(--black)}
+.s-tint{--fg:var(--ink);--mute:rgba(10,15,24,.68);--line:rgba(10,15,24,.13);--card:rgba(255,255,255,.66);--cardh:rgba(255,255,255,.95);--here:#fff;--bp:var(--ink);
+  background:linear-gradient(180deg,#fff 0%,#E8F4FF 58%,#8DC8FF 100%)}
+.s-haze{--fg:var(--black);--mute:rgba(4,6,10,.72);--line:rgba(4,6,10,.16);--card:rgba(255,255,255,.2);--cardh:rgba(255,255,255,.34);--here:#1B91FF;--bp:var(--black);--acc:#fff;
+  background:radial-gradient(70% 130% at 104% 50%,#E8F4FF 0%,rgba(232,244,255,.5) 30%,rgba(232,244,255,0) 62%),var(--blue)}
+.wrap{max-width:1320px;margin:0 auto;padding:0 var(--gut)}
+h1,h2,h3{font-weight:500;letter-spacing:-.03em;line-height:1.04}
+h1{font-size:clamp(38px,4.7vw,76px)}
+h2{font-size:clamp(30px,3.6vw,56px)}
+h3{font-size:22px;letter-spacing:-.025em;line-height:1.15}
+h1 i,h2 i,.one i{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.02em;color:var(--acc)}
+p{color:var(--mute)}
+.lead{font-size:clamp(18px,1.5vw,22px);line-height:1.45;max-width:34em}
+.lbl{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.lbl b{font-weight:500;color:var(--acc)}
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 24px;border-radius:999px;font-weight:500;font-size:16px;background:var(--blue);color:#fff;overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s}
+.btn::after{content:"→";transition:transform .35s var(--ease)}
+.btn:hover{box-shadow:0 0 0 6px rgba(27,145,255,.22),0 12px 40px -10px rgba(27,145,255,.8)}
+.btn:hover::after{transform:translateX(5px)}
+.btn-line{background:none;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
+.btn-line:hover{box-shadow:inset 0 0 0 1px var(--fg)}
+.btn-sm{min-height:38px;padding:0 16px;font-size:14px}
+.btn-sm::after{content:none}
+.s-haze .btn{background:var(--black)}
+.more{display:inline-flex;gap:8px;align-items:center;font-weight:500;color:var(--acc)}
+.more::after{content:"→";transition:transform .35s var(--ease)}
+.more:hover::after,a:hover>.more::after,a:hover .more::after{transform:translateX(5px)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.head{display:flex;flex-wrap:wrap;gap:18px 40px;justify-content:space-between;align-items:flex-end;margin-bottom:clamp(30px,4vw,56px)}
+.head>div{max-width:780px;display:grid;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,72px);align-items:center}
+
+/* glass cards that light up under the cursor */
+.card{position:relative;border-radius:24px;padding:clamp(22px,2.6vw,34px);background:var(--card);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden;transition:background .35s,transform .45s var(--ease),box-shadow .35s;--mx:50%;--my:50%}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(280px circle at var(--mx) var(--my),rgba(27,145,255,.34),transparent 70%);opacity:0;transition:opacity .4s;pointer-events:none}
+.card>*{position:relative}
+a.card:hover,.card.hov:hover{background:var(--cardh);transform:translateY(-4px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 60%,transparent)}
+.card:hover::before{opacity:1}
+.card.solid{background:var(--panel);--here:var(--panel);--fg:#fff;--mute:rgba(255,255,255,.66);--line:rgba(255,255,255,.13);--bp:var(--ice);color:#fff}
+.card em.n{display:block;font:normal 500 11px var(--mono);letter-spacing:.1em;color:var(--acc);margin-bottom:18px}
+.card h3{margin-bottom:10px}
+.card .go{position:absolute;right:22px;top:22px;font-size:18px;opacity:0;transform:translate(-8px,8px);transition:all .4s var(--ease);color:var(--acc)}
+.card:hover .go{opacity:1;transform:none}
+/* generated visuals stand in where photography and film will go */
+.vis{position:relative;border-radius:20px;min-height:220px;overflow:hidden;background:radial-gradient(90% 120% at 100% 50%,#E8F4FF 0%,rgba(232,244,255,0) 60%),var(--blue);transition:transform .7s var(--ease)}
+.vis.v2{background:radial-gradient(120% 90% at 30% 120%,#1B91FF 0%,rgba(27,145,255,0) 62%),#04060A}
+.vis.v3{background:linear-gradient(180deg,#fff 0%,#E8F4FF 50%,#8DC8FF 100%)}
+.vis::after{content:attr(data-n);position:absolute;right:16px;bottom:2px;font:500 clamp(64px,7vw,110px)/1 var(--sans);letter-spacing:-.05em;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.7)}
+.vis.v3::after{-webkit-text-stroke-color:rgba(10,15,24,.35)}
+.vis .chip{position:absolute;left:14px;top:14px}
+.chip{display:inline-flex;align-items:center;gap:8px;font:500 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:6px;background:var(--black);color:#fff}
+.chip.w{background:#fff;color:var(--black)}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+a:hover>.vis,.card:hover .vis{transform:scale(1.03)}
+.play{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);display:grid;place-items:center;color:#fff;font-size:20px;padding-left:4px;transition:transform .4s var(--ease),background .3s}
+.vis:hover .play{transform:scale(1.12);background:var(--blue)}
+
+/* ---------- motion: blur-in reveals, headlines that rise word by word ---------- */
+.rv{opacity:0;transform:translateY(26px);filter:blur(8px);transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease);transition-delay:calc(var(--d,0)*90ms)}
+.rv.in{opacity:1;transform:none;filter:none}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .04em .14em;margin:0 -.04em -.14em}
+.w>span{display:inline-block;transform:translateY(112%);transition:transform 1s var(--ease);transition-delay:calc(var(--i)*38ms)}
+[data-split].in .w>span{transform:none}
+body.intro-on .w>span{transform:translateY(112%)!important;transition:none}
+main{transition:opacity .28s,transform .28s var(--ease),filter .28s}
+main.leaving{opacity:0;transform:translateY(14px);filter:blur(8px)}
+#bar{position:fixed;left:0;top:0;height:2px;width:100%;background:var(--blue);box-shadow:0 0 14px var(--blue);transform:scaleX(0);transform-origin:left;z-index:90;pointer-events:none}
+#bar.go{animation:bar .7s var(--io)}
+@keyframes bar{0%{transform:scaleX(0);opacity:1}70%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+
+/* ---------- page transition: fade to night, the mark draws itself, fade back ---------- */
+#pt{position:fixed;inset:0;z-index:85;display:grid;place-items:center;background:radial-gradient(90% 70% at 50% 125%,rgba(27,145,255,.55),transparent 62%),#04060A;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .34s ease,visibility 0s .34s}
+#pt.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .28s ease}
+#pt svg{width:clamp(66px,10vmin,104px);height:auto;clip-path:circle(0% at 0% 100%)}
+#pt.on svg{animation:ptDraw .6s var(--io) .08s both}
+@keyframes ptDraw{from{clip-path:circle(0% at 0% 100%)}to{clip-path:circle(150% at 0% 100%)}}
+/* ---------- cursor: dot + trailing ring (desktop, fine pointers only) ---------- */
+.cur-ring,.cur-dot{position:fixed;left:0;top:0;z-index:10000;pointer-events:none;opacity:0;transition:opacity .3s}
+.cur-ring i,.cur-dot i{display:block;border-radius:50%;transition:transform .35s var(--ease),background .3s,opacity .3s}
+.cur-ring{mix-blend-mode:difference}
+.cur-ring i{width:26px;height:26px;margin:-13px 0 0 -13px;border:2px solid #fff}
+.cur-dot i{width:8px;height:8px;margin:-4px 0 0 -4px;background:#1B91FF;box-shadow:0 0 0 1.5px rgba(255,255,255,.9)}
+.has-cur .cur-ring,.has-cur .cur-dot{opacity:1}
+.cur-ring.hot i{transform:scale(2);background:rgba(255,255,255,.14)}
+.cur-ring.down i{transform:scale(.7)}
+.cur-ring.hot.down i{transform:scale(1.6)}
+html.has-cur,html.has-cur *{cursor:none!important}
+/* ---------- hero pipes made of particles ---------- */
+.hero-fig .artw{position:relative;margin:10px 18px 18px}
+.hero-fig .artw canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-fig .artw .art{position:relative;display:block;padding:0}
+
+/* ---------- (earlier shutter transitions, no longer triggered): five blue shutters rise in a wave, the page name lands, a line draws, shutters lift away ---------- */
+#tr{position:fixed;inset:0;z-index:85;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr);visibility:hidden}
+#tr.in,#tr.out{visibility:visible;pointer-events:auto}
+#tr i{display:block;background:linear-gradient(180deg,#1B91FF,#0F6FD0);transform:translateY(101%);margin-right:-1px}
+#tr i:nth-child(even){background:linear-gradient(180deg,#2E9BFF,#1B91FF)}
+#tr.in i{animation:shIn .55s var(--io) both;animation-delay:calc(var(--c)*60ms)}
+#tr.out i{transform:none;animation:shOut .6s var(--io) both;animation-delay:calc((4 - var(--c))*60ms)}
+@keyframes shIn{from{transform:translateY(101%);border-radius:60px 60px 0 0}to{transform:none;border-radius:0}}
+@keyframes shOut{from{transform:none}to{transform:translateY(-101%);border-radius:0 0 60px 60px}}
+.tr-name{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;text-align:center}
+.tr-name b{display:block;overflow:hidden;font-weight:500;font-size:clamp(44px,8vw,128px);letter-spacing:-.04em;line-height:1.05;padding:0 .1em .08em}
+.tr-name b span{display:inline-block;transform:translateY(110%)}
+.tr-name small{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;opacity:0}
+.tr-name svg{width:min(360px,60vw);height:22px;overflow:visible}
+.tr-name path{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.tr-name circle{fill:#04060A;opacity:0}
+#tr.in .tr-name b span{animation:nmIn .4s var(--ease) .15s both}
+#tr.in .tr-name small{animation:fadeIn .3s .25s both}
+#tr.in .tr-name path{animation:lnIn .35s var(--io) .2s both}
+#tr.in .tr-name circle{animation:dotRun .35s var(--io) .2s both}
+#tr.out .tr-name b span{transform:none;animation:nmOut .25s var(--io) both}
+#tr.out .tr-name small,#tr.out .tr-name svg{animation:fadeOut .25s both}
+#tr.out .tr-name path{stroke-dashoffset:0}
+@keyframes nmIn{from{transform:translateY(110%) rotate(4deg)}to{transform:none}}
+@keyframes nmOut{to{transform:translateY(-110%)}}
+@keyframes lnIn{to{stroke-dashoffset:0}}
+@keyframes dotRun{0%{opacity:1;transform:translateX(0)}100%{opacity:1;transform:translateX(100%)}}
+@keyframes fadeIn{to{opacity:.85}}
+@keyframes fadeOut{from{opacity:.85}to{opacity:0}}
+.tr-name circle{transform-box:view-box}
+/* one transition per destination page (data-fx on #tr); "wave" is the default above */
+/* rows: bars slide across from the left · cross: bars come in from alternate sides */
+#tr[data-fx="rows"],#tr[data-fx="cross"]{grid-template-columns:1fr;grid-template-rows:repeat(5,1fr)}
+#tr[data-fx="rows"] i,#tr[data-fx="cross"] i{margin:0 0 -1px;transform:translateX(-101%)}
+#tr[data-fx="rows"].in i,#tr[data-fx="cross"].in i{animation-name:rwIn}
+#tr[data-fx="rows"].out i,#tr[data-fx="cross"].out i{animation-name:rwOut}
+#tr[data-fx="cross"].in i:nth-child(even){animation-name:rwInR}
+#tr[data-fx="cross"].out i:nth-child(even){animation-name:rwOutR}
+@keyframes rwIn{from{transform:translateX(-101%);border-radius:0 60px 60px 0}to{transform:none;border-radius:0}}
+@keyframes rwOut{from{transform:none}to{transform:translateX(101%);border-radius:60px 0 0 60px}}
+@keyframes rwInR{from{transform:translateX(101%);border-radius:60px 0 0 60px}to{transform:none;border-radius:0}}
+@keyframes rwOutR{from{transform:none}to{transform:translateX(-101%);border-radius:0 60px 60px 0}}
+/* zip: columns mesh from top and bottom, then pull apart */
+#tr[data-fx="zip"].in i:nth-child(even){animation-name:shInD}
+#tr[data-fx="zip"].out i:nth-child(odd){animation-name:shOutD}
+@keyframes shInD{from{transform:translateY(-101%);border-radius:0 0 60px 60px}to{transform:none;border-radius:0}}
+@keyframes shOutD{from{transform:none}to{transform:translateY(101%);border-radius:60px 60px 0 0}}
+/* blinds: columns open from the middle of the screen outward */
+#tr[data-fx="blinds"] i{transform:scaleY(0)}
+#tr[data-fx="blinds"].in i{animation-name:blIn;animation-duration:.4s;animation-delay:calc(max(var(--c) - 2,2 - var(--c))*50ms)}
+#tr[data-fx="blinds"].out i{animation-name:blOut;animation-duration:.4s;animation-delay:calc((2 - max(var(--c) - 2,2 - var(--c)))*50ms)}
+@keyframes blIn{from{transform:scaleY(0);border-radius:60px}to{transform:none;border-radius:0}}
+@keyframes blOut{from{transform:none}to{transform:scaleY(0);border-radius:60px}}
+/* wipe: a slanted edge sweeps across · iris: a circle opens from the Talk to us button */
+#tr[data-fx="wipe"] i,#tr[data-fx="iris"] i{transform:none;animation:none!important}
+#tr[data-fx="wipe"].in{animation:wpIn .7s var(--io) both}
+#tr[data-fx="wipe"].out{animation:wpOut .7s var(--io) both}
+@keyframes wpIn{from{clip-path:polygon(0 0,0 0,-30% 100%,0 100%)}to{clip-path:polygon(0 0,130% 0,100% 100%,0 100%)}}
+@keyframes wpOut{from{clip-path:polygon(0 0,130% 0,130% 100%,-30% 100%)}to{clip-path:polygon(130% 0,130% 0,130% 100%,100% 100%)}}
+#tr[data-fx="iris"].in{animation:irIn .75s var(--io) both}
+#tr[data-fx="iris"].out{animation:irOut .7s var(--io) both}
+@keyframes irIn{from{clip-path:circle(0% at 94% 5%)}to{clip-path:circle(150% at 94% 5%)}}
+@keyframes irOut{from{clip-path:circle(150% at 6% 95%)}to{clip-path:circle(0% at 6% 95%)}}
+
+/* ---------- header (as on the cream site: links tuck away on the way down) ---------- */
+.hdr{position:fixed;inset:0 0 auto 0;z-index:50;height:72px;padding:0 var(--gut);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;color:#fff;transition:background .35s,color .35s,box-shadow .35s,opacity .4s}
+.hdr[data-on=light]{color:var(--ink)}
+.hdr.is-solid{background:rgba(4,6,10,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 1px 0 rgba(255,255,255,.09)}
+.hdr.is-solid[data-on=light]{background:rgba(255,255,255,.72);box-shadow:0 1px 0 rgba(10,15,24,.09)}
+body.intro-on .hdr,body.intro-on .rail{opacity:0;pointer-events:none}
+.hdr-word{transition:opacity .35s}
+.hdr-word svg{height:15px;width:auto}
+.hdr-nav{display:flex;align-items:center;gap:32px}
+.hdr-links{display:flex;gap:32px;transition:opacity .35s,transform .5s var(--ease)}
+.hdr-links a{position:relative;font-size:14.5px;opacity:.7;transition:opacity .2s;padding:6px 0}
+.hdr-links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .4s var(--ease)}
+.hdr-links a:hover,.hdr-links a.on{opacity:1}
+.hdr-links a:hover::after,.hdr-links a.on::after{transform:scaleX(1);transform-origin:left}
+.hdr-mark svg{width:40px;height:40px;transition:transform .5s var(--ease)}
+.hdr-mark:hover svg{transform:rotate(-8deg) scale(1.06)}
+.hdr-right{display:flex;justify-content:flex-end;align-items:center;gap:12px}
+.hdr.is-down .hdr-links,.hdr.is-down .hdr-word{opacity:0;pointer-events:none}
+.hdr.is-down .hdr-links:first-child{transform:translateX(26px)}
+.hdr.is-down .hdr-links:last-child{transform:translateX(-26px)}
+.burger{display:none;width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 0 1px currentColor;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.burger span{width:16px;height:1.5px;background:currentColor}
+
+/* ---------- right rail + side panel (as on the cream site) ---------- */
+.rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:22px;color:#fff;transition:color .35s,opacity .4s}
+.rail[data-on=light]{color:var(--ink)}
+.rail ul{display:flex;flex-direction:column;gap:4px}
+.rail a{display:flex;align-items:center;justify-content:flex-end;gap:10px;height:18px}
+.rail a span{font:500 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;opacity:0;transform:translateX(6px);transition:opacity .25s,transform .25s;white-space:nowrap}
+.rail a i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4;transition:all .3s var(--ease)}
+.rail a:hover span,.rail a.on span{opacity:1;transform:none}
+.rail a.on i{opacity:1;background:var(--blue);width:20px;height:2px;border-radius:2px;box-shadow:0 0 10px var(--blue)}
+.rail-menu{font:500 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;display:flex;flex-direction:column;align-items:flex-end;gap:7px;padding:6px 0;opacity:.8}
+.rail-menu b{display:block;width:18px;height:6px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor}
+.rail-menu:hover{opacity:1;color:var(--blue)}
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(4,6,10,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .4s}
+.panel{position:fixed;top:0;right:0;bottom:0;z-index:70;width:min(420px,100vw);background:radial-gradient(120% 60% at 100% 110%,rgba(27,145,255,.55),transparent 60%),var(--panel);color:#fff;padding:26px 30px 30px;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .6s var(--io);visibility:hidden}
+body.menu-open .panel{transform:none;visibility:visible}
+body.menu-open .scrim{opacity:1;pointer-events:auto}
+.panel-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.panel-nav a{display:flex;align-items:baseline;gap:18px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:30px;font-weight:500;letter-spacing:-.035em;transition:color .25s,padding .4s var(--ease)}
+.panel-nav a:hover,.panel-nav a.on{color:var(--blue);padding-left:10px}
+.panel-nav em{font:normal 11px var(--mono);opacity:.5}
+.panel-foot{margin-top:auto;display:grid;gap:14px;justify-items:start}
+
+/* ---------- intro: draw a line ---------- */
+.intro{position:fixed;inset:0;z-index:29;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;color:#fff;
+  background:radial-gradient(120% 85% at 50% 125%,#1B91FF 0%,rgba(27,145,255,.4) 30%,rgba(27,145,255,0) 62%),var(--black);transition:opacity .8s,visibility .8s,transform .9s var(--io)}
+.intro h2{font-size:clamp(48px,7vw,112px);margin-bottom:14px}
+.intro p{color:rgba(255,255,255,.7);margin-bottom:180px}
+.intro-skip{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7);display:flex;gap:8px;align-items:center}
+.intro-skip kbd{font:10px var(--mono);border:1px solid currentColor;border-radius:4px;padding:1px 5px}
+body:not(.intro-on) .intro{opacity:0;visibility:hidden;transform:translateY(-4%)}
+
+/* ---------- pencil ---------- */
+#sketch{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:30;pointer-events:none}
+#sketch polyline{fill:none;stroke:var(--blue);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(27,145,255,.9))}
+.dpencil{position:absolute;z-index:31;width:86px;height:86px;cursor:grab;touch-action:none;transition:left .9s var(--io),top .9s var(--io);filter:drop-shadow(0 0 14px rgba(27,145,255,.55))}
+.dpencil.drag,.dpencil.used{transition:none}
+.dpencil.drag{cursor:grabbing}
+.dpencil svg{width:100%;height:100%;pointer-events:none;overflow:visible;animation:bob 2.8s ease-in-out infinite}
+.dpencil.used svg{animation:none}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.dpencil-hint,.erase{position:absolute;left:4px;top:calc(100% + 6px);white-space:nowrap;font:500 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:6px;background:#fff;color:var(--black)}
+.dpencil-hint{pointer-events:none;transition:opacity .3s}
+.dpencil.used .dpencil-hint,body.intro-on .dpencil-hint{opacity:0}
+.erase{opacity:0;pointer-events:none;transition:opacity .3s,background .2s,color .2s}
+.erase:hover{background:var(--blue);color:#fff}
+.erase.on{opacity:1;pointer-events:auto}
+.dpencil.drag .erase{opacity:0}
+.dpencil.flip .erase,.dpencil.flip .dpencil-hint{left:auto;right:4px}
+.pslot{display:block;width:86px;height:86px;flex:none}
+
+/* ---------- drawings: conduit with current running through it ---------- */
+.art{width:100%;height:auto;overflow:visible;--pf-y:var(--here);--pf-b:color-mix(in srgb,var(--bp) 14%,var(--here));--pf-n:color-mix(in srgb,var(--blue) 42%,var(--here));color:var(--bp)}
+svg text{font:500 10.5px var(--mono);letter-spacing:.08em;fill:currentColor}
+.art .lead-l{fill:none;stroke:currentColor;stroke-width:1;opacity:.7}
+.cur{animation:cur 1.1s linear infinite}
+@keyframes cur{to{stroke-dashoffset:-24}}
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(120px,16vh,180px)}
+.hero h1{max-width:16ch;margin:20px 0 clamp(26px,3.4vw,44px)}
+.hero .lbl{font-size:10px}
+.hero-row{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(24px,4vw,56px);align-items:end}
+.hero-row .lead{margin-bottom:26px}
+.hero-fig{position:relative}
+.hero-fig .card{padding:0}
+.hero-fig .bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.hero-fig .art{padding:10px 18px 18px}
+.hero-fig .pslot{position:absolute;left:-40px;top:38%}
+@media (min-width:1181px){.wrap{padding-right:calc(var(--gut) + 84px)}}
+.phero h1{font-size:clamp(36px,4.2vw,68px);max-width:18ch;margin:18px 0 24px}
+.phero .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:30px}
+.phero .wrap>div:first-child{max-width:900px}
+.phero .lead{margin-bottom:26px}
+
+/* ---------- home ---------- */
+.say{font-size:clamp(28px,3.7vw,58px);font-weight:500;letter-spacing:-.04em;line-height:1.06;color:var(--fg);max-width:20ch}
+.say span{color:color-mix(in srgb,var(--fg) 20%,transparent);transition:color .45s}
+.say span.on{color:var(--fg)}
+.viewer{padding:0}
+.v-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.v-bar b{font:500 26px/1 var(--mono);color:#fff;transition:color .3s}
+.viewer.clean .v-bar b{color:var(--blue);text-shadow:0 0 16px var(--blue)}
+.v-stage{position:relative;--x:24%;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.v-stage svg{width:100%;height:auto}
+.v-stage svg.after{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--x)) 0 0);background:var(--panel)}
+.v-handle{position:absolute;top:0;bottom:0;left:var(--x);width:2px;background:var(--blue);box-shadow:0 0 14px var(--blue);transform:translateX(-1px);pointer-events:none}
+.v-handle::after{content:"◂ ▸";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:12px;letter-spacing:1px;box-shadow:0 0 0 6px rgba(27,145,255,.25),0 10px 30px rgba(27,145,255,.6)}
+.v-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.v-foot{padding:14px 20px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.clash circle{fill:rgba(255,255,255,.12);stroke:#fff;stroke-width:1.5}
+.clash path{stroke:#fff;stroke-width:1.8;fill:none}
+.clash .ring{fill:none;transform-box:fill-box;transform-origin:center;animation:ping 2.2s ease-out infinite}
+@keyframes ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:15px;font-weight:500;padding:0 18px;min-height:44px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);color:var(--mute);transition:all .3s var(--ease)}
+.chips button:hover{color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+.chips button[aria-pressed=true]{background:var(--fg);color:var(--here);box-shadow:none}
+.s-night .chips button[aria-pressed=true],.s:not(.s-tint):not(.s-haze) .chips button[aria-pressed=true]{background:var(--blue);color:#fff}
+.rolep{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(22px,3.4vw,48px);margin-top:18px;align-items:stretch}
+.rolep h3{font-size:clamp(26px,2.8vw,40px);letter-spacing:-.035em;line-height:1.04;margin-bottom:14px}
+.rolep.swap>*{animation:swap .6s var(--ease) both}
+.rolep.swap>*:nth-child(2){animation-delay:.08s}
+@keyframes swap{from{opacity:0;transform:translateY(14px);filter:blur(6px)}}
+.ticks{display:grid;gap:0;margin-top:20px;border-top:1px solid var(--line)}
+.ticks li{display:grid;grid-template-columns:26px 1fr;gap:6px;padding:12px 0;border-bottom:1px solid var(--line);color:var(--fg)}
+.ticks li::before{content:"";width:7px;height:7px;margin-top:9px;background:var(--blue);border-radius:50%;box-shadow:0 0 8px var(--blue)}
+.proj{display:grid;gap:16px;align-content:start}
+.proj small{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.proj p{font-size:15.5px}
+.belief{padding-top:20px;border-top:1px solid var(--line)}
+.belief em{display:block;font:normal 500 11px var(--mono);letter-spacing:.1em;margin-bottom:clamp(24px,4vw,56px)}
+.belief h3{font-size:clamp(24px,2.4vw,32px);letter-spacing:-.035em;margin-bottom:12px}
+.note{display:grid;gap:14px;align-content:start}
+.note small{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.note b{font-size:clamp(20px,1.9vw,26px);font-weight:500;letter-spacing:-.03em;line-height:1.12}
+.note .vis{min-height:150px}
+.cta{display:flex;flex-wrap:wrap;gap:30px;align-items:flex-end;justify-content:space-between}
+.cta>div{max-width:860px;display:grid;gap:18px}
+
+/* puzzle */
+.playg{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:clamp(18px,2.6vw,36px);align-items:start}
+#pzBoard{display:block;width:100%;height:auto;max-height:86vh;touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow:visible}
+.pz-ghost .trk{fill:none;stroke:rgba(232,244,255,.05);stroke-linecap:round}
+.pz-ghost .mid{fill:none;stroke:rgba(232,244,255,.34);stroke-width:1.2;stroke-dasharray:5 7}
+.pz-ghost rect{fill:rgba(232,244,255,.04);stroke:rgba(232,244,255,.34);stroke-width:1.2;stroke-dasharray:5 7}
+.pz-piece{cursor:grab;touch-action:none}
+.pz-piece .cur{animation-play-state:paused;opacity:.35}
+.pz-piece.fit .cur{animation-play-state:running;opacity:1}
+.pz-piece.sel{--bp:#fff;filter:drop-shadow(0 0 10px rgba(27,145,255,.9))}
+.pz-piece.snap{transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.pz-piece .pop{transform-box:fill-box;transform-origin:center;transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
+.pz-piece.drag{cursor:grabbing}
+.pz-piece.drag .pop{transform:scale(1.06) rotate(0deg)!important}
+.pz-piece.fit{cursor:pointer}
+.pz-piece path,.pz-piece rect,.pz-piece circle{pointer-events:none}
+.pz-piece .hit{fill:none;stroke:transparent;pointer-events:stroke}
+.pz-piece rect.hit{pointer-events:all;fill:transparent}
+.pz-piece:not(.fit):not(.drag) .bob{animation:hover 3.6s ease-in-out infinite}
+@keyframes hover{50%{transform:translateY(-8px)}}
+.done #pzBoard{filter:drop-shadow(0 0 18px rgba(27,145,255,.55))}
+.done .pz-ghost{opacity:0;transition:opacity .5s}
+.spool{padding:0;position:sticky;top:96px}
+.spool header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.spool h3{padding:20px 20px 4px;font-size:44px;letter-spacing:-.05em}
+.spool>p{padding:0 20px 16px;font-size:14.5px}
+.spool dl{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--line)}
+.spool dt,.spool dd{padding:11px 20px;border-bottom:1px solid var(--line);font-size:15px}
+.spool dt{font:500 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding-top:14px}
+.spool dd{text-align:right;font-variant-numeric:tabular-nums}
+.spool footer{padding:14px 20px;font-size:12.5px;color:var(--mute)}
+
+/* ---------- what we do ---------- */
+.svc .card{display:flex;flex-direction:column;min-height:300px}
+.svc .get{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-size:15px;color:var(--fg)}
+.way h3{font-size:clamp(28px,3vw,44px);letter-spacing:-.04em;margin:14px 0 14px}
+.proc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,72px);align-items:center}
+.stepper{border-top:1px solid var(--line)}
+.stepper button{position:relative;display:grid;grid-template-columns:44px 1fr;width:100%;text-align:left;padding:17px 0;border-bottom:1px solid var(--line);opacity:.45;transition:opacity .35s}
+.stepper button:hover{opacity:.85}
+.stepper button[aria-selected=true]{opacity:1}
+.stepper em{font:normal 500 12px var(--mono);color:var(--blue);padding-top:6px}
+.stepper b{font-size:clamp(22px,2.2vw,30px);font-weight:500;letter-spacing:-.035em;display:block;transition:transform .4s var(--ease)}
+.stepper button:hover b{transform:translateX(6px)}
+.stepper span{display:block;max-height:0;overflow:hidden;font-size:16px;color:var(--mute);max-width:44ch;transition:max-height .55s var(--ease),margin .55s var(--ease)}
+.stepper button[aria-selected=true] span{max-height:110px;margin-top:6px}
+.stepper button::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--blue);box-shadow:0 0 10px var(--blue)}
+.stepper.auto button[aria-selected=true]::after{animation:fill 4.5s linear forwards}
+@keyframes fill{to{width:100%}}
+.room svg{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 10px rgba(27,145,255,.35))}
+.room path{fill:none;stroke:var(--ice);stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.3s var(--ease)}
+.room path.hot{stroke:var(--blue);stroke-width:2.4}
+.room path.on{stroke-dashoffset:0}
+.room text{opacity:0;transition:opacity .6s .4s}
+.room text.on{opacity:.9}
+.asks li{display:grid;grid-template-columns:44px 1fr;align-items:center;padding:20px 0;border-bottom:1px solid var(--line);font-size:clamp(22px,2.6vw,38px);font-weight:500;letter-spacing:-.035em;line-height:1.1;transition:padding .4s var(--ease)}
+.asks li:first-child{border-top:1px solid var(--line)}
+.asks li:hover{padding-left:12px}
+.asks li::before{content:"";width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--blue);transition:background .5s,box-shadow .5s}
+.asks.in li::before{background:var(--blue);box-shadow:0 0 14px var(--blue)}
+.asks.in li:nth-child(2)::before{transition-delay:.25s}.asks.in li:nth-child(3)::before{transition-delay:.5s}.asks.in li:nth-child(4)::before{transition-delay:.75s}
+.tools{display:flex;flex-wrap:wrap;gap:10px}
+.tools span{padding:12px 20px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);font-weight:500;transition:all .3s var(--ease)}
+.tools span:hover{background:var(--blue);color:#fff;box-shadow:none;transform:translateY(-3px)}
+
+/* ---------- work / about / careers / contact ---------- */
+.feat{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(22px,4vw,56px);align-items:center}
+.feat .vis{min-height:400px}
+.kv{border-top:1px solid var(--line);margin:22px 0 24px}
+.kv div{display:grid;grid-template-columns:170px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.kv dt{font-weight:500;color:var(--fg)}
+.kv dd{color:var(--mute)}
+.story p+p{margin-top:14px}
+.story .vis{min-height:380px}
+.vm .lbl{margin-bottom:18px}
+.vm .big{font-size:clamp(24px,2.8vw,40px);font-weight:500;letter-spacing:-.035em;line-height:1.1;color:var(--fg)}
+.letter{max-width:780px}
+.letter p{font-size:clamp(18px,1.6vw,22px);color:var(--fg);margin-top:18px}
+.letter .sig{font-family:var(--serif);font-style:italic;font-size:34px;color:var(--blue)}
+.duo b{display:flex;justify-content:space-between;align-items:center;font-size:clamp(34px,4.4vw,64px);font-weight:500;letter-spacing:-.045em;line-height:1;margin-bottom:14px}
+.duo b::after{content:"→";font-size:.6em;transition:transform .45s var(--ease)}
+.duo a:hover b::after{transform:translateX(10px)}
+.qa details{border-bottom:1px solid var(--line)}
+.qa details:first-child{border-top:1px solid var(--line)}
+.qa summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:20px 0;font-size:clamp(20px,2vw,27px);font-weight:500;letter-spacing:-.03em;line-height:1.15;transition:padding .4s var(--ease),color .25s}
+.qa summary:hover{padding-left:10px;color:var(--acc)}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{content:"+";font:400 26px/1 var(--mono);color:var(--acc);transition:transform .4s var(--ease)}
+.qa details[open] summary::after{transform:rotate(45deg)}
+.qa details p{padding:0 0 22px;max-width:60ch}
+.one{font-size:clamp(32px,4.6vw,72px);font-weight:500;letter-spacing:-.045em;line-height:1.02;color:var(--fg);max-width:17ch}
+.roles a{display:grid;grid-template-columns:1fr auto 40px;align-items:center;gap:20px;padding:24px 0;border-bottom:1px solid var(--line);transition:padding .45s var(--ease),color .25s}
+.roles a:first-child{border-top:1px solid var(--line)}
+.roles a:hover{padding-left:14px;color:var(--acc)}
+.roles b{font-size:clamp(22px,2.4vw,34px);font-weight:500;letter-spacing:-.035em}
+.roles span{color:var(--mute);font-size:14.5px}
+.roles i{font-style:normal;font-size:22px;justify-self:end;transition:transform .45s var(--ease)}
+.roles a:hover i{transform:translateX(8px)}
+.hire{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.contact{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(24px,4vw,56px);align-items:start}
+.nexts{margin:18px 0 26px;border-top:1px solid var(--line)}
+.nexts li{display:grid;grid-template-columns:44px 1fr;padding:15px 0;border-bottom:1px solid var(--line);color:var(--fg)}
+.nexts em{font:normal 500 12px var(--mono);color:var(--blue);padding-top:4px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form label,.form legend{display:grid;gap:8px;font:500 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.form .wide{grid-column:1/-1}
+.form input[type=text],.form input[type=email],.form input[type=tel],.form textarea,.form select{background:rgba(255,255,255,.05);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;color:#fff;font:16px var(--sans);padding:13px 14px;width:100%;resize:vertical;min-height:50px;transition:box-shadow .3s,background .3s}
+.form select option{color:#0A0F18}
+.form input:hover,.form textarea:hover,.form select:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.form input:focus,.form textarea:focus,.form select:focus{outline:0;background:rgba(27,145,255,.1);box-shadow:inset 0 0 0 1px var(--blue),0 0 0 4px rgba(27,145,255,.2)}
+.form fieldset{border:0;display:flex;flex-wrap:wrap;gap:8px}
+.form fieldset legend{margin-bottom:10px}
+.form fieldset label{display:inline-flex;font:500 14.5px var(--sans);letter-spacing:0;text-transform:none;color:#fff;cursor:pointer}
+.form fieldset input{position:absolute;opacity:0}
+.form fieldset span{padding:10px 16px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);transition:all .3s var(--ease)}
+.form fieldset label:hover span{box-shadow:inset 0 0 0 1px #fff}
+.form fieldset input:checked+span{background:var(--blue);box-shadow:0 0 18px rgba(27,145,255,.6)}
+.form fieldset input:focus-visible+span{outline:2px solid var(--blue);outline-offset:3px}
+.drop{border-radius:16px;padding:24px;text-align:center;box-shadow:inset 0 0 0 1px var(--line);font:400 15px var(--sans)!important;letter-spacing:0!important;text-transform:none!important;cursor:pointer;transition:all .3s}
+.drop:hover{background:rgba(27,145,255,.1);box-shadow:inset 0 0 0 1px var(--blue)}
+.drop input{display:none}
+.form-msg{grid-column:1/-1;min-height:20px;font-size:14.5px;color:var(--blue)}
+
+/* ---------- footer ---------- */
+.foot{padding-bottom:30px}
+.foot-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start}
+.foot nav{display:flex;flex-wrap:wrap;gap:26px 56px;font-size:15.5px}
+.foot nav div{display:grid;gap:10px;align-content:start}
+.foot nav a{opacity:.7;transition:opacity .2s,transform .35s var(--ease)}
+.foot nav a:hover{opacity:1;transform:translateX(4px)}
+.foot-word{width:100%;height:auto;margin:clamp(50px,7vw,110px) 0 22px;color:#fff}
+.foot-base{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;padding-top:18px;border-top:1px solid var(--line)}
+
+@media (max-width:1180px){.rail a span{display:none}}
+@media (max-width:980px){
+  .hdr{grid-template-columns:1fr auto;height:64px}
+  .hdr-nav,.rail{display:none}
+  .burger{display:flex}
+  .hero-row,.split,.rolep,.proc,.playg,.feat,.contact{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .hire{grid-template-columns:1fr 1fr}
+  .spool{position:static}
+  .dpencil,.pslot{width:68px;height:68px}
+  .phero .pslot{display:none}
+  .s{border-radius:28px 28px 0 0;margin-top:-28px}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .g3,.g2,.hire,.form{grid-template-columns:1fr}
+  .kv div{grid-template-columns:1fr;gap:2px}
+  .roles a{grid-template-columns:1fr 30px}
+  .roles span{grid-column:1;grid-row:2}
+  .hdr-right .btn{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01s!important;animation-delay:0s!important;transition-duration:.01s!important}
+  .rv{opacity:1;transform:none;filter:none}
+  .w>span{transform:none!important}
+  .say span{color:var(--fg)}
+}
+</style>
+</head>
+<body class="intro-on">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="word" viewBox="0 0 406 59"><g fill="currentColor">
+      <path d="M384.943 21.893L405.838 0H388.731L374.858 14.5703C373.93 15.5458 372.286 14.8883 372.286 13.5413V0H359.89V57.931H372.286V35.9557C372.286 35.4739 372.473 35.011 372.807 34.6644C373.664 33.7754 375.134 33.9534 375.754 35.0213L389.062 57.931H403.441L384.517 25.5332C383.832 24.3603 384.006 22.8756 384.943 21.893Z"/>
+      <path d="M12.3959 11.6516H39.1716V0.247559H0V57.9305H12.3959V32.1009C12.3959 30.9402 13.3369 29.9993 14.4978 29.9993H33.3417V18.5949H12.3959V11.6516Z"/>
+      <path d="M57.0209 0.247559L46.1952 34.213L38.6748 57.9305H51.6493L54.6242 48.3447H54.5416L60.4093 29.668L61.0052 27.8039C61.805 25.3015 65.3566 25.3336 66.1115 27.8498H66.194L71.4004 44.956L75.3673 57.9305H88.2593L70.2435 0.247559H57.0209Z"/>
+      <path d="M137.549 21.1831C138.439 19.3044 138.917 17.248 138.917 15.123C138.917 6.85857 131.727 0.0820312 122.802 0.0820312H96.5225V58.0133H120.901C132.636 58.0133 142.223 49.1705 142.223 38.3445C142.223 34.0377 140.766 30.0707 138.263 26.8526C137.002 25.232 136.669 23.0384 137.549 21.1831ZM107.835 11.5694H122.802C124.868 11.5694 126.604 13.1396 126.604 15.123C126.604 17.0233 124.868 18.5937 122.802 18.5937H107.835V11.5694ZM120.901 46.6089H107.835V30.0808H120.901C125.86 30.0808 129.827 33.7167 129.827 38.3445C129.827 42.8903 125.86 46.6089 120.901 46.6089Z"/>
+      <path d="M157.179 8.67704C151.229 14.1312 148.006 21.4035 148.006 29.0889C148.006 36.8573 151.229 44.1299 157.179 49.584C163.047 55.0382 170.898 58.0135 179.244 58.0135H194.368V46.6092H179.244C168.831 46.6092 160.402 38.7578 160.402 29.0889C160.402 19.503 168.831 11.6516 179.244 11.6516H194.368V0.247559H179.244C170.898 0.247559 163.047 3.22291 157.179 8.67704Z"/>
+      <path d="M233.951 11.4324C233.951 15.3652 230.763 18.5533 226.83 18.5533H214.117C207.773 18.5533 202.63 23.6964 202.63 30.0406V57.9303H215.026V33.8968C215.026 31.7669 216.753 30.0404 218.882 30.0404H228.014C228.035 30.0404 228.056 30.0404 228.077 30.0403C231.302 30.0294 233.951 32.5664 233.951 35.7914V57.9303H246.347V0.0820312H233.951V11.4324Z"/>
+      <path d="M208.415 11.6514H209.241C212.436 11.6514 215.026 9.06149 215.026 5.8667C215.026 2.67192 212.436 0.0820312 209.241 0.0820312H208.415C205.22 0.0820312 202.63 2.67192 202.63 5.8667C202.63 9.06149 205.22 11.6514 208.415 11.6514Z"/>
+      <path d="M272.955 0.247559L262.129 34.213L254.608 57.9305H267.583L270.558 48.3447H270.475L276.343 29.668L276.939 27.8039C277.739 25.3015 281.29 25.3336 282.045 27.8498H282.128L287.334 44.956L291.301 57.9305H304.193L286.177 0.247559H272.955Z"/>
+      <path d="M324.851 41.5199V0H312.455V57.9312H351.627V45.5355H328.867C326.649 45.5355 324.851 43.7376 324.851 41.5199Z"/>
+    </g></symbol>
+    <!-- the FabChalk app-icon mark: rounded square with the conduit F -->
+    <symbol id="mark" viewBox="0 0 200 200"><rect x="4" y="4" width="192" height="192" rx="46" fill="#04060A" stroke="rgba(255,255,255,.28)" stroke-width="3"/><use href="#mono" x="56.5" y="40" width="87" height="120"/></symbol>
+    <!-- the client's monogram (Monogram.svg), top layers only, cream swapped for white -->
+    <symbol id="mono" viewBox="0 0 83 115">
+      <linearGradient id="mg2" x1="53.6882" y1="53.9024" x2="54.846" y2="30.4261" gradientUnits="userSpaceOnUse"><stop offset="0.155998" stop-color="#070707"/><stop offset="0.727887" stop-color="#fff"/></linearGradient>
+      <linearGradient id="mg4" x1="48.5239" y1="71.2836" x2="46.5523" y2="31.8208" gradientUnits="userSpaceOnUse"><stop offset="0.42989" stop-color="#070707"/><stop offset="0.722837" stop-color="#fff"/></linearGradient>
+      <linearGradient id="mg5" x1="15.4363" y1="55.9421" x2="18.0983" y2="34.8447" gradientUnits="userSpaceOnUse"><stop offset="0.12558" stop-color="#070707"/><stop offset="0.712869" stop-color="#fff"/></linearGradient>
+      <linearGradient id="mg7" x1="4.88964" y1="69.5301" x2="2.34211" y2="6.14784" gradientUnits="userSpaceOnUse"><stop offset="0.0300168" stop-color="#070707"/><stop offset="0.400492" stop-color="#fff"/></linearGradient>
+      <path d="M82.4687 22.1814V30.695H76.2762V30.6208C76.2762 29.9109 75.7026 29.3306 74.9926 29.3306H39.5737C33.9369 29.3306 29.3687 33.8992 29.3687 39.5357V45.4189C29.2389 45.4435 29.1092 45.4808 28.9794 45.512C27.1581 45.9752 25.3987 46.5734 23.6946 47.308V39.5357C23.6946 30.7629 30.8007 23.6567 39.5737 23.6567H74.9926C75.7026 23.6567 76.2762 23.0764 76.2762 22.3665V22.1814H82.4687Z" fill="url(#mg2)"/>
+      <path d="M82.4688 11.0901V19.6037H76.2764V19.4988C76.2764 18.7888 75.7028 18.2086 74.9927 18.2086H39.9505C27.9548 18.2086 18.2374 27.9322 18.2374 39.9216V50.2067C16.2 51.5223 14.2985 53.0341 12.5698 54.7197V39.9276C12.5698 24.8019 24.8306 12.541 39.9505 12.541H74.9927C75.7028 12.541 76.2764 11.9607 76.2764 11.2508V11.0901H82.4688Z" fill="url(#mg4)"/>
+      <path d="M12.5803 40.7603H18.2287L18.2288 54.1561H12.5803V40.7603Z" fill="url(#mg5)"/>
+      <path d="M82.4687 0V8.50726H76.2762V8.37763C76.2762 7.66775 75.702 7.08743 74.992 7.08743H38.3514C21.1573 7.08743 7.1738 20.9599 7.1738 38.0056V61.3234C3.54987 67.0035 1.44458 73.739 1.44458 80.9622V38.0056C1.44458 17.8297 18.0025 1.42016 38.3514 1.42016H74.992C75.702 1.42016 76.2762 0.839574 76.2762 0.129627V0H82.4687Z" fill="url(#mg7)"/>
+      <g fill="#fff">
+        <path d="M51.2742 65.1384V65.3221C51.2742 66.0341 50.6979 66.6117 49.9859 66.6124L39.5692 66.6203C30.8148 66.6203 23.6901 73.7451 23.6901 82.4995V106.978C23.6901 107.69 23.1132 108.268 22.4005 108.268H22.1855V114.455H30.6977V108.268H30.6538C29.9411 108.268 29.3642 107.69 29.3642 106.978V82.4995C29.3642 81.4441 29.5246 80.4253 29.8207 79.4678C30.0183 78.8263 30.2778 78.2155 30.5926 77.6339C30.9073 77.0603 31.278 76.5173 31.6979 76.0109C33.5684 73.7391 36.4018 72.3703 39.5692 72.3703L49.9839 72.361C50.6966 72.3603 51.2742 72.9379 51.2742 73.6506H57.4627V65.1384H51.2742Z"/>
+        <path d="M57.4652 42.9583V51.4718H51.2727V51.3234C51.2727 50.6134 50.6985 50.0331 49.9824 50.0391L38.03 50.0457C26.3124 50.0457 16.095 56.6022 10.8534 66.2397C8.76678 70.0665 7.47018 74.3885 7.17387 78.982C7.13061 79.6361 7.11218 80.2969 7.11218 80.9636V106.979C7.11218 107.696 7.68631 108.27 8.40245 108.27H8.51351V114.456H0V108.27H0.154315C0.864329 108.27 1.44465 107.696 1.44465 106.979V80.9636C1.44465 73.7404 3.54987 67.0042 7.17387 61.3248C8.71114 58.9173 10.5262 56.7007 12.5697 54.7191C14.2984 53.0335 16.1999 51.521 18.2372 50.2061C19.8485 49.1687 21.5402 48.2551 23.306 47.4772C23.4358 47.4213 23.5649 47.3661 23.6946 47.3102C25.3988 46.5755 27.1582 45.9773 28.9795 45.5142C29.1092 45.4829 29.239 45.4456 29.3688 45.421C32.1469 44.7363 35.0482 44.3776 38.03 44.3776L49.9884 44.3716C50.6984 44.3656 51.2727 43.7914 51.2727 43.0814V42.9583H57.4652Z"/>
+        <path d="M51.2742 54.0483V54.1961C51.2742 54.9081 50.6973 55.485 49.9853 55.4857L39.9479 55.4943C24.8527 55.4943 12.5672 67.7801 12.5672 82.8814V106.979C12.5672 107.691 11.9898 108.269 11.2776 108.269H11.0935V114.457H19.6058V108.269H19.5244C18.8122 108.269 18.2348 107.691 18.2348 106.979V82.8814C18.2348 79.1397 19.1855 75.6143 20.8586 72.5406C24.5446 65.7672 31.7179 61.1678 39.9479 61.1678L49.9833 61.1591C50.696 61.1585 51.2742 61.7361 51.2742 62.4487V62.5605H57.4621V54.0483H51.2742Z"/>
+      </g>
+    </symbol>
+    <symbol id="fmark" viewBox="0 0 148 141">
+      <path fill="currentColor" d="M121.067 0C128.462 0 134.48 6.01614 134.48 13.4111L134.487 55.8281H134.492V64.4844C134.492 67.1423 136.646 69.2978 139.304 69.2979L147.143 69.2607V72.0273L139.304 72.0635C136.646 72.0635 134.492 74.219 134.492 76.877V86.4824C134.492 90.0658 133.097 93.4351 130.563 95.9688L89.5928 136.938C87.0596 139.472 83.6908 140.867 80.1084 140.867H37.4727C30.0764 140.867 24.0596 134.85 24.0596 127.454V127.336C24.0594 121.466 19.2833 116.69 13.4131 116.69C6.01697 116.69 0.000105825 110.673 0 103.277V44.9004C0.000121791 41.3536 1.44354 37.8853 3.95898 35.3857L35.6465 3.89844C38.1768 1.38446 41.5345 0 45.1016 0H121.067ZM45.1016 2.7666C42.2706 2.7666 39.6059 3.86598 37.5977 5.86133L5.90918 37.3486C3.91239 39.3327 2.7677 42.0853 2.76758 44.9004V103.277C2.76768 109.148 7.54287 113.923 13.4131 113.923C20.8087 113.923 26.826 119.94 26.8262 127.336V127.454C26.8262 133.324 31.6023 138.101 37.4727 138.101H80.1084C82.9519 138.101 85.6256 136.993 87.6367 134.982L128.607 94.0117C130.618 92.0007 131.726 89.3265 131.726 86.4824V85.5332H131.725V80.3926L131.724 76.8525C131.711 74.2057 129.563 72.0637 126.913 72.0635H118.256V69.2979H126.913C129.535 69.2977 131.665 67.1997 131.722 64.5908L131.714 13.4121C131.713 7.54247 126.937 2.7666 121.067 2.7666H45.1016Z"/>
+      <svg x="32" y="28" width="76" height="76" viewBox="8 12 84 84"><g fill="none" stroke="currentColor" stroke-width="5"><path d="M22 88V42A24 24 0 0 1 46 18H76"/><path d="M30 52V42A16 16 0 0 1 46 26H76"/><path d="M38 47V42A8 8 0 0 1 46 34H76"/><path d="M22 88V70A24 24 0 0 1 46 46H66"/><path d="M30 88V70A16 16 0 0 1 46 54H66"/><path d="M38 88V70A8 8 0 0 1 46 62H66"/></g><g fill="#1B91FF"><rect x="76" y="14.5" width="5" height="7"/><rect x="76" y="22.5" width="5" height="7"/><rect x="76" y="30.5" width="5" height="7"/><rect x="66" y="42.5" width="5" height="7"/><rect x="66" y="50.5" width="5" height="7"/><rect x="66" y="58.5" width="5" height="7"/></g></svg>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="bar" aria-hidden="true"></div>
+<div id="pt" aria-hidden="true"><svg viewBox="0 0 83 115"><use href="#mono"/></svg></div>
+<div class="cur-ring" id="curRing" aria-hidden="true"><i></i></div><div class="cur-dot" id="curDot" aria-hidden="true"><i></i></div>
+<div id="tr" aria-hidden="true">
+  <i style="--c:0"></i><i style="--c:1"></i><i style="--c:2"></i><i style="--c:3"></i><i style="--c:4"></i>
+  <div class="tr-name"><small id="trNum">01 / 07</small><b><span id="trName">Work</span></b>
+    <svg viewBox="0 0 360 22" aria-hidden="true"><path pathLength="1" d="M4 11 H120 Q134 11 134 4 Q134 18 148 18 H356"/><circle cx="4" cy="11" r="5" style="transform-origin:0 0"/></svg></div>
+</div>
+
+<header class="hdr" id="hdr" data-on="dark">
+  <a class="hdr-word" href="#/home" aria-label="FabChalk home"><svg viewBox="0 0 406 59" width="103" height="15"><use href="#word"/></svg></a>
+  <nav class="hdr-nav" aria-label="Main">
+    <div class="hdr-links"><a href="#/work" data-nav="work">Work</a><a href="#/what-we-do" data-nav="what-we-do">What we do</a><a href="#/about" data-nav="about">About</a></div>
+    <a class="hdr-mark" href="#/home" aria-label="Home"><svg viewBox="0 0 200 200"><use href="#mark"/></svg></a>
+    <div class="hdr-links"><a href="#/field-notes" data-nav="field-notes">Field notes</a><a href="#/careers" data-nav="careers">Careers</a><a href="#/contact" data-nav="contact">Contact</a></div>
+  </nav>
+  <div class="hdr-right"><a class="btn btn-sm" href="#/contact">Talk to us</a><button class="burger" type="button" data-open-panel aria-label="Open menu"><span></span><span></span></button></div>
+</header>
+
+<aside class="rail" id="rail" data-on="dark" aria-label="On this page"><ul id="railList"></ul><button class="rail-menu" type="button" data-open-panel><b></b>Menu</button></aside>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-hidden="true" aria-label="Menu">
+  <div class="panel-top"><span class="lbl" style="color:rgba(255,255,255,.6)">// Menu</span><button class="lbl" style="color:#fff" type="button" id="panelClose">Close ✕</button></div>
+  <nav class="panel-nav">
+    <a href="#/home" data-nav="home"><em>00</em>Home</a><a href="#/work" data-nav="work"><em>01</em>Work</a><a href="#/what-we-do" data-nav="what-we-do"><em>02</em>What we do</a><a href="#/about" data-nav="about"><em>03</em>About</a><a href="#/field-notes" data-nav="field-notes"><em>04</em>Field notes</a><a href="#/careers" data-nav="careers"><em>05</em>Careers</a><a href="#/contact" data-nav="contact"><em>06</em>Contact</a>
+  </nav>
+  <div class="panel-foot"><a class="btn" href="#/contact">Talk to us</a><span class="lbl" style="color:rgba(255,255,255,.6)">hello@fabchalk.com</span></div>
+</aside>
+
+<div class="intro" id="intro">
+  <h2>Draw a <i>line.</i></h2>
+  <p>Pick up the pencil and drag it across the page.</p>
+  <button class="intro-skip" type="button" id="introSkip"><kbd>esc</kbd> to skip ›</button>
+</div>
+<svg id="sketch" aria-hidden="true"></svg>
+<div class="dpencil" id="dpencil" role="img" aria-label="Pencil: drag it to draw on the page">
+  <svg viewBox="0 0 86 86">
+    <g stroke="#04060A" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M4 82 L10 58 L28 76 Z" fill="#E8F4FF"/><path d="M4 82 L6.5 72 L14 79.5 Z" fill="#04060A"/>
+      <path d="M10 58 L52 16 L70 34 L28 76 Z" fill="#1B91FF"/><path d="M52 16 L58 10 L76 28 L70 34 Z" fill="#E8F4FF"/>
+      <path d="M58 10 L62 6 Q66 2 70 6 L80 16 Q84 20 80 24 L76 28 Z" fill="#fff"/>
+      <path d="M22 62 L58 26" stroke="#fff" stroke-opacity=".7" stroke-width="2" fill="none"/>
+    </g>
+  </svg>
+  <span class="dpencil-hint">↑ Pick me up &amp; draw</span>
+  <button class="erase" id="erase" type="button">Erase sketch ✕</button>
+</div>
+
+<main id="main">
+
+<!-- ================================================= HOME -->
+<div class="page" data-page="home" data-title="FabChalk — Electrical digital construction">
+  <section class="s s-night hero" data-surface="dark" data-section data-label="Intro">
+    <div class="wrap">
+      <p class="lbl rv"><b>●</b> &nbsp;Electrical digital construction &nbsp;/&nbsp; for electrical contractors only</p>
+      <h1 data-split>The future of electrical construction won’t be built by <i>bigger teams.</i></h1>
+      <div class="hero-row">
+        <div class="rv"><p class="lead">It will be built by better technical leaders. FabChalk is building that group, for electrical contractors only.</p>
+          <div class="row"><a class="btn" href="#/work">See the work</a><a class="btn btn-line" href="#/careers">Join the team</a></div></div>
+        <figure class="hero-fig rv" style="--d:2">
+          <div class="card solid">
+            <div class="bar"><span class="chip"><i></i>Live model</span><span class="lbl">E-401 · Level 02 ceiling</span></div>
+            <div class="artw"><canvas id="heroDust" aria-hidden="true"></canvas>
+            <svg class="art" id="heroArt" viewBox="0 0 1000 470" role="img" aria-label="Coordinated conduit run with current flowing through it"></svg></div>
+          </div>
+          <span class="pslot" data-pslot></span>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="s s-tint" data-surface="light" data-section data-label="What we do">
+    <div class="wrap">
+      <div class="head"><div><p class="lbl">01 / Capability</p><h2 data-split>Electrical digital construction. BIM is where it <i>starts.</i></h2><p class="lead rv">Modeling and coordination are the foundation. On top of them we bring constructability, prefabrication, automation and the data that shows what is actually happening on your job.</p></div><a class="more rv" href="#/what-we-do">What we do</a></div>
+      <div class="g3">
+        <a class="card rv" href="#/what-we-do"><span class="go">↗</span><em class="n">01</em><h3>Coordination</h3><p>Electrical settled against every other trade before anyone prices the install.</p></a>
+        <a class="card rv" style="--d:1" href="#/what-we-do"><span class="go">↗</span><em class="n">02</em><h3>Install drawings</h3><p>The dimensions, elevations and supports a foreman needs to build it once.</p></a>
+        <a class="card rv" style="--d:2" href="#/what-we-do"><span class="go">↗</span><em class="n">03</em><h3>Prefabrication</h3><p>Spool sheets and assembly drawings your shop can cut and build from.</p></a>
+        <a class="card rv" href="#/what-we-do"><span class="go">↗</span><em class="n">04</em><h3>Constructability</h3><p>We read the job the way an electrician would, and raise the flag early.</p></a>
+        <a class="card rv" style="--d:1" href="#/what-we-do"><span class="go">↗</span><em class="n">05</em><h3>Standards and content</h3><p>Templates, families and naming, built to your standard or with you.</p></a>
+        <a class="card rv" style="--d:2" href="#/what-we-do"><span class="go">↗</span><em class="n">06</em><h3>Automation and data</h3><p>Tools that take the repetitive work, so judgement goes where it counts.</p></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="play" data-surface="dark" data-section data-label="Try it">
+    <div class="wrap">
+      <div class="head"><div><p class="lbl">02 / Try it</p><h2 data-split>Your crew installs it <i>once.</i> Feel it.</h2><p class="lead rv">Every spool has one place, a tag and a cut length. Pick one up to read its sheet, then drop it in. The current runs when it fits.</p></div>
+        <div class="row rv"><span class="lbl" id="pzCount">0 / 7 fitted</span><button class="btn btn-sm btn-line" type="button" id="pzAuto">Fit it for me</button><button class="btn btn-sm btn-line" type="button" id="pzReset">Reset</button><button class="btn btn-sm" type="button" id="pzNext" hidden>Next package →</button></div></div>
+      <div class="playg">
+        <div id="puzzle">
+          <p class="lbl" id="pzLevel">Package 1 of 4</p><h3 id="pzStatus" style="margin-top:6px;font-size:26px">Drag each spool into its slot.</h3>
+          <svg class="art" id="pzBoard" viewBox="0 0 900 900" role="img" aria-label="Spool puzzle: drag the loose spools into the dashed slots"></svg>
+        </div>
+        <aside class="card spool" aria-live="polite">
+          <header><span class="lbl">Spool sheet</span><span class="chip w" id="spState">Loose</span></header>
+          <h3 id="spTag">SP-01</h3><p id="spDesc">Pick up any spool to see its sheet.</p>
+          <dl><dt>Size</dt><dd id="spSize">—</dd><dt>Cut length</dt><dd id="spLen">—</dd><dt>Bends</dt><dd id="spBend">—</dd><dt>Ends</dt><dd id="spEnds">—</dd><dt>Install order</dt><dd id="spSeq">—</dd></dl>
+          <footer>Illustrative data, generated from the drawing.</footer>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="s s-tint" data-surface="light" data-section data-label="Proof">
+    <div class="wrap split">
+      <div><p class="lbl" style="margin-bottom:22px">03 / Why it matters</p><p class="say" id="say">Most of what goes wrong in the field was settled months earlier, in a model nobody checked hard enough. We check it. We catch it. Your crew installs it once.</p></div>
+      <div class="card solid viewer rv" id="viewer">
+        <div class="v-bar"><span class="lbl" id="vStatus">Clashes · busway vs. hangers</span><b id="vCount">3</b></div>
+        <div class="v-stage" id="vStage">
+          <svg class="art before" id="vBefore" viewBox="0 0 800 400" aria-hidden="true"></svg>
+          <svg class="art after" id="vAfter" viewBox="0 0 800 400" aria-hidden="true"></svg>
+          <div class="v-handle"></div>
+          <input class="v-range" id="vRange" type="range" min="0" max="100" value="24" step="0.1" aria-label="Before and after: drag right to see the coordinated hanger layout">
+        </div>
+        <div class="v-foot"><span class="lbl">← Coordinated</span><span class="lbl">Drag the handle</span><span class="lbl">As designed →</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s s-night" data-surface="dark" data-section data-label="Who it's for">
+    <div class="wrap">
+      <div class="head"><div><p class="lbl">04 / Who it's for</p><h2 data-split>The same model, three different <i>jobs.</i></h2><p class="lead rv">Who signs the contract and who builds from the drawings are rarely the same person. We work for both.</p></div></div>
+      <div class="chips rv" role="group" aria-label="Choose your role" id="roleTabs"><button type="button" aria-pressed="true">BIM managers and directors</button><button type="button" aria-pressed="false">Project managers</button><button type="button" aria-pressed="false">Field and prefab</button></div>
+      <div class="rolep rv" id="rolePanel"></div>
+    </div>
+  </section>
+
+  <section class="s s-tint" data-surface="light" data-section data-label="Work">
+    <div class="wrap">
+      <div class="head"><div><p class="lbl">05 / Work</p><h2 data-split>The call we made, on <i>real</i> jobs.</h2></div><a class="more rv" href="#/work">All work</a></div>
+      <div class="g3">
+        <a class="proj rv" href="#/work"><div class="vis" data-n="01"><span class="chip"><i></i>Data center</span></div><small>Case study in progress</small><h3>What we found, the call we made, and the number it changed.</h3></a>
+        <a class="proj rv" style="--d:1" href="#/work"><div class="vis v2" data-n="02"><span class="chip w"><i></i>Hospital</span></div><small>Case study in progress</small><h3>What we found, the call we made, and the number it changed.</h3></a>
+        <a class="proj rv" style="--d:2" href="#/work"><div class="vis v3" data-n="03"><span class="chip"><i></i>Airport</span></div><small>Case study in progress</small><h3>What we found, the call we made, and the number it changed.</h3></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="s s-haze" data-surface="light" data-section data-label="Beliefs">
+    <div class="wrap">
+      <div class="head"><div><p class="lbl">06 / Beliefs</p><h2 data-split>What we believe, and how it shows up in the work.</h2></div><a class="more rv" href="#/about">Our story and point of view</a></div>
+      <div class="g3">
+        <div class="belief rv"><em>01</em><h3>Construction comes first.</h3><p>Technology serves the build, not the other way around. If the electrician still can’t get the right information at the right time, we haven’t solved anything.</p></div>
+        <div class="belief rv" style="--d:1"><em>02</em><h3>Judgement, not hours.</h3><p>Better projects come from better planning and better decisions, not from more hours or a larger team.</p></div>
+        <div class="belief rv" style="--d:2"><em>03</em><h3>Learning compounds.</h3><p>Every job should leave us, our clients and our people better prepared for the next one.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s s-night" data-surface="dark" data-section data-label="Careers">
+    <div class="wrap split">
+      <div><p class="lbl" style="margin-bottom:18px">07 / Careers</p><h2 data-split>Nothing here is fully set up yet. That is the <i>job.</i></h2>
+        <p class="lead rv" style="margin:22px 0 28px">We want people who are curious about how electrical gets built, who pick up a problem without waiting to be asked, and who look at where we are and see room to grow.</p>
+        <div class="row rv"><a class="btn" href="#/careers">See open roles</a><a class="btn btn-line" href="#/about">Meet the team</a></div></div>
+      <div class="vis v2 rv" style="min-height:380px" data-n="FC"><span class="chip w"><i></i>Team film to come</span></div>
+    </div>
+  </section>
+
+  <section class="s s-tint" data-surface="light" data-section data-label="Field notes">
+    <div class="wrap">
+      <div class="head"><div><p class="lbl">08 / Field notes</p><h2 data-split>Field notes</h2><p class="lead rv">Why things go wrong in electrical construction, explained plainly. No pitch at the end.</p></div><a class="more rv" href="#/field-notes">All field notes</a></div>
+      <div class="g3">
+        <a class="card note rv" href="#/field-notes"><span class="go">↗</span><small>Coordination</small><b>A pretty model isn’t the same as a useful model</b></a>
+        <a class="card note rv" style="--d:1" href="#/field-notes"><span class="go">↗</span><small>Field</small><b>What a foreman needs on an install drawing, and what he doesn’t</b></a>
+        <a class="card note rv" style="--d:2" href="#/field-notes"><span class="go">↗</span><small>Process</small><b>Tribal knowledge: where it hides and what it costs</b></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="s s-haze" data-surface="light" data-section data-label="Talk to us">
+    <div class="wrap cta">
+      <div><h2 data-split>We’d rather do your next ten jobs than win this one on price.</h2><p class="lead rv">If you need the lowest bid on a single job, we’re probably not your firm. If you want a team that knows your standards by the third job and gets sharper on every one after, let’s talk.</p></div>
+      <a class="btn rv" href="#/contact">Talk to us</a>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================= WHAT WE DO -->
+<div class="page" data-page="what-we-do" data-title="What we do — FabChalk" hidden>
+  <section class="s s-night hero phero" data-surface="dark" data-section data-label="Intro"><div class="wrap">
+    <div><p class="lbl rv"><b>●</b> &nbsp;What we do</p><h1 data-split>Electrical digital construction. BIM is the <i>foundation.</i></h1>
+      <p class="lead rv">We work only with electrical contractors. We model and coordinate the job, then make sure what we draw can be built, prefabricated and installed once.</p>
+      <div class="row rv"><button class="btn btn-line btn-sm" type="button" data-scroll="#for-bim">For BIM managers and directors</button><button class="btn btn-line btn-sm" type="button" data-scroll="#for-pm">For project managers</button><button class="btn btn-line btn-sm" type="button" data-scroll="#process">How a job runs</button></div></div>
+    <span class="pslot" data-pslot></span></div></section>
+
+  <section class="s s-tint" data-surface="light" data-section data-label="Services"><div class="wrap">
+    <div class="head"><div><p class="lbl">01 / Services</p><h2 data-split>What we do</h2></div></div>
+    <div class="g3 svc">
+      <article class="card hov rv"><em class="n">01</em><h3>Coordination</h3><p>Electrical modeled and coordinated against structure, mechanical, plumbing and fire protection, so conflicts get settled in the model instead of at the ceiling. Raceway, cable tray, busway, gear and supports.</p><p class="get">You get: a coordinated model and clash log, signed off before install pricing.</p></article>
+      <article class="card hov rv" style="--d:1"><em class="n">02</em><h3>Install drawings</h3><p>Drawings built for the foreman, not the file server: dimensions, elevations, hanger and support locations, and the details the crew actually asks about.</p><p class="get">You get: field-ready sheets, issued ahead of your crew and material.</p></article>
+      <article class="card hov rv" style="--d:2"><em class="n">03</em><h3>Prefabrication</h3><p>Spool sheets, assembly drawings, cut lists and bills of material your shop can build from, sequenced to how the job will be installed.</p><p class="get">You get: shop-ready packages, in your prefab team’s format.</p></article>
+      <article class="card hov rv"><em class="n">04</em><h3>Constructability review</h3><p>We read the job the way an electrician would. Access, sequence, labor and material, flagged early, with options and what each one costs the field.</p><p class="get">You get: a short list of the calls that matter, before you price it.</p></article>
+      <article class="card hov rv" style="--d:1"><em class="n">05</em><h3>Standards and content</h3><p>Templates, families, parameters and naming. We build to your standard, or help you write one your whole department can keep.</p><p class="get">You get: content and standards that outlast the job.</p></article>
+      <article class="card hov rv" style="--d:2"><em class="n">06</em><h3>Automation and data</h3><p>We build our own tools for the repetitive work: quantities, tagging, sheet setup, model checks. The routine gets automated, so people spend their time on judgement.</p><p class="get">You get: faster turnaround on the parts no one should do by hand.</p></article>
+    </div>
+  </div></section>
+
+  <section class="s s-night" data-surface="dark" data-section data-label="Two ways"><div class="wrap">
+    <div class="head"><div><p class="lbl">02 / Engagement</p><h2 data-split>Two ways to work with <i>us.</i></h2></div></div>
+    <div class="g2">
+      <div class="card hov way rv" id="for-bim"><p class="lbl">For BIM managers and directors</p><h3>An extension of your team.</h3><p>Your standards, your templates, your naming, your tools. Your engineers set the direction, and we add capacity they can count on, job after job.</p>
+        <ul class="ticks"><li>We work inside your environment, not beside it.</li><li>Your BIM engineers stay in charge of the model. We take the load off them.</li><li>We raise the flag early and hand it back clean.</li></ul></div>
+      <div class="card hov way rv" style="--d:1" id="for-pm"><p class="lbl">For project managers</p><h3>Scoped delivery.</h3><p>Hand us a scope and a schedule. We come back with what it takes, what it costs and when each milestone lands. How we get there is on us.</p>
+        <ul class="ticks"><li>A price with every assumption written down.</li><li>Milestones tied to your schedule.</li><li>One person accountable for the whole scope.</li></ul></div>
+    </div>
+  </div></section>
+
+  <section class="s" id="process" data-surface="dark" data-section data-label="Process"><div class="wrap">
+    <div class="head"><div><p class="lbl">03 / Process</p><h2 data-split>How a job <i>runs</i></h2><p class="lead rv">The same six steps on every job. The last one is the reason the next job goes better.</p></div></div>
+    <div class="proc">
+      <div class="stepper auto rv" role="tablist" id="stepper">
+        <button type="button" role="tab"><em>01</em><div><b>Scope and standards</b><span>We agree what is in, what is out, the milestones and whose standard we follow.</span></div></button>
+        <button type="button" role="tab"><em>02</em><div><b>Model and coordinate</b><span>Electrical is modeled and settled against every other trade.</span></div></button>
+        <button type="button" role="tab"><em>03</em><div><b>Constructability check</b><span>We walk it the way the crew will build it, and bring you the calls that matter.</span></div></button>
+        <button type="button" role="tab"><em>04</em><div><b>Drawings for shop and field</b><span>Spool sheets for prefab, install drawings for the field, issued ahead of need.</span></div></button>
+        <button type="button" role="tab"><em>05</em><div><b>Field support</b><span>RFIs, changes and questions from site, answered by the people who drew it.</span></div></button>
+        <button type="button" role="tab"><em>06</em><div><b>Lessons written down</b><span>What we learned goes back into your standards and ours.</span></div></button>
+      </div>
+      <figure class="room rv" style="--d:1" id="room">
+        <svg viewBox="0 0 560 480" role="img" aria-label="Electrical room drawing that builds up step by step">
+          <path data-s="1" pathLength="1" d="M60 60 H500 V380 H60 Z"/>
+          <path data-s="1" pathLength="1" d="M60 380 L14 456 H546 L500 380"/>
+          <path data-s="2" pathLength="1" d="M60 100 H500 M500 116 H60"/>
+          <path data-s="2" pathLength="1" d="M96 100 V116 M132 100 V116 M168 100 V116 M204 100 V116 M240 100 V116 M276 100 V116 M312 100 V116 M348 100 V116 M384 100 V116 M420 100 V116 M456 100 V116"/>
+          <path data-s="2" pathLength="1" d="M100 200 H400 V380 H100 Z M200 200 V380 M300 200 V380"/>
+          <path data-s="2" pathLength="1" d="M118 222 H182 V262 H118 Z M218 222 H282 V262 H218 Z M318 222 H382 V262 H318 Z"/>
+          <path data-s="2" pathLength="1" d="M430 236 H478 V330 H430 Z M440 252 H468 M440 266 H468 M440 280 H468 M440 294 H468"/>
+          <path data-s="3" pathLength="1" class="hot" d="M134 116 V200 M150 116 V200 M166 116 V200"/>
+          <path data-s="3" pathLength="1" class="hot" d="M242 116 V200 M258 116 V200"/>
+          <path data-s="3" pathLength="1" class="hot" d="M350 116 V150 Q350 166 366 166 H438 Q454 166 454 182 V236"/>
+          <path data-s="4" pathLength="1" d="M100 410 H400 M100 402 V418 M400 402 V418"/>
+          <path data-s="4" pathLength="1" d="M118 282 H182 M118 296 H182 M118 310 H182 M218 282 H282 M218 296 H282 M218 310 H282 M318 282 H382 M318 296 H382 M318 310 H382"/>
+          <text data-s="1" x="60" y="48">E-401 · SCOPE AGREED</text>
+          <text data-s="4" x="250" y="434" text-anchor="middle">SWGR-1 · 9'-0"</text>
+          <text data-s="4" x="120" y="160" text-anchor="end">SP-01…03</text>
+          <text data-s="5" x="520" y="170" text-anchor="start">RFI-12 ✓</text>
+          <path data-s="5" pathLength="1" d="M454 200 H514"/>
+          <text data-s="6" x="500" y="48" text-anchor="end">→ STANDARDS REV D</text>
+        </svg>
+        <figcaption class="lbl" id="roomCap" style="margin-top:12px">Step 1 · Scope and standards</figcaption>
+      </figure>
+    </div>
+  </div></section>
+
+  <section class="s s-tint" data-surface="light" data-section data-label="Four questions"><div class="wrap split" style="align-items:start">
+    <div><p class="lbl" style="margin-bottom:18px">04 / Ownership</p><h2 data-split>Four questions we ask on every <i>call.</i></h2><p class="lead rv" style="margin-top:18px">Everyone here thinks like an owner. “We’ve always done it this way” is not on the list.</p></div>
+    <ul class="asks rv"><li>Does this reduce labor?</li><li>Does this reduce risk?</li><li>Does this make the field team’s job easier?</li><li>Would we pay for this if it were our company?</li></ul>
+  </div></section>
+
+  <section class="s s-night" data-surface="dark" data-section data-label="Tools"><div class="wrap split">
+    <div><p class="lbl" style="margin-bottom:18px">05 / Tools</p><h2 data-split>We work in <i>your</i> tools.</h2><p class="lead rv" style="margin-top:18px">Tools change. The job doesn’t. Being good at software without knowing why an electrician installs something a certain way isn’t enough, so we start from the install and pick the tool second.</p></div>
+    <div class="tools rv"><span>Revit</span><span>Navisworks</span><span>AutoCAD</span><span>Autodesk Construction Cloud</span><span>Your fabrication software</span></div>
+  </div></section>
+
+  <section class="s s-haze" data-surface="light" data-section data-label="Talk to us"><div class="wrap cta"><div><h2 data-split>Send us a scope. We’ll tell you what it takes.</h2><p class="lead rv">Drawings, specs and your schedule. We come back with the scope, the price and the milestones.</p></div><a class="btn rv" href="#/contact">Talk to us</a></div></section>
+</div>
+
+<!-- ================================================= WORK -->
+<div class="page" data-page="work" data-title="Work — FabChalk" hidden>
+  <section class="s s-night hero phero" data-surface="dark" data-section data-label="Intro"><div class="wrap">
+    <div><p class="lbl rv"><b>●</b> &nbsp;Work</p><h1 data-split>The work has already answered the <i>question.</i></h1>
+      <p class="lead rv">Every project here is written the same way: the job, what we found, the call we made and what it changed in the field.</p>
+      <div class="chips rv" data-filter="#workGrid"><button type="button" aria-pressed="true" data-f="all">All</button><button type="button" aria-pressed="false" data-f="dc">Data centers</button><button type="button" aria-pressed="false" data-f="health">Healthcare</button><button type="button" aria-pressed="false" data-f="air">Aviation</button><button type="button" aria-pressed="false" data-f="ind">Industrial</button><button type="button" aria-pressed="false" data-f="com">Commercial</button></div></div>
+    <span class="pslot" data-pslot></span></div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="Featured"><div class="wrap feat">
+    <div class="vis v2 rv" data-n="01"><span class="chip w"><i></i>Model walk-through to come</span><span class="play">▶</span></div>
+    <article class="rv" style="--d:1"><p class="lbl">Featured project · how every case is written</p><h2 style="margin-top:12px">Four parts, every time.</h2>
+      <dl class="kv">
+        <div><dt>The job</dt><dd>Building type, size and our scope.</dd></div>
+        <div><dt>What we found</dt><dd>The condition, stated plainly. Never framed as someone else’s mistake.</dd></div>
+        <div><dt>The call we made</dt><dd>The options we raised, and the one the client chose.</dd></div>
+        <div><dt>In the field</dt><dd>What changed for the crew: installed once, crew-days saved, RFIs avoided.</dd></div>
+      </dl>
+      <a class="more" href="#/contact">Ask us for a reference job</a></article>
+  </div></section>
+  <section class="s s-night" data-surface="dark" data-section data-label="Projects"><div class="wrap">
+    <div class="head"><div><p class="lbl">Projects</p><h2 data-split>More <i>projects</i></h2></div><span class="lbl rv" id="workCount">6 projects</span></div>
+    <div class="g3" id="workGrid">
+      <a class="proj rv" href="#/work" data-cat="dc"><div class="vis" data-n="01"><span class="chip"><i></i>Data center</span></div><small>Case study in progress</small></a>
+      <a class="proj rv" style="--d:1" href="#/work" data-cat="health"><div class="vis v3" data-n="02"><span class="chip"><i></i>Hospital</span></div><small>Case study in progress</small></a>
+      <a class="proj rv" style="--d:2" href="#/work" data-cat="air"><div class="vis v2" data-n="03" style="box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)"><span class="chip w"><i></i>Airport</span></div><small>Case study in progress</small></a>
+      <a class="proj rv" href="#/work" data-cat="ind"><div class="vis v3" data-n="04"><span class="chip"><i></i>Industrial plant</span></div><small>Case study in progress</small></a>
+      <a class="proj rv" style="--d:1" href="#/work" data-cat="com"><div class="vis v2" data-n="05" style="box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)"><span class="chip w"><i></i>Commercial tower</span></div><small>Case study in progress</small></a>
+      <a class="proj rv" style="--d:2" href="#/work" data-cat="dc"><div class="vis" data-n="06"><span class="chip"><i></i>Data center</span></div><small>Case study in progress</small></a>
+    </div>
+  </div></section>
+  <section class="s s-haze" data-surface="light" data-section data-label="Talk to us"><div class="wrap cta"><h2 data-split style="max-width:14ch">Have a job like one of these? Send us the scope.</h2><a class="btn rv" href="#/contact">Talk to us</a></div></section>
+</div>
+
+<!-- ================================================= ABOUT -->
+<div class="page" data-page="about" data-title="About — FabChalk" hidden>
+  <section class="s s-night hero phero" data-surface="dark" data-section data-label="Intro"><div class="wrap"><div><p class="lbl rv"><b>●</b> &nbsp;About</p><h1 data-split>We exist to help the people who build our world, build it <i>better.</i></h1>
+    <p class="lead rv">FabChalk started as one person showing small, specific pieces of electrical BIM. Today it is a team that does all of it, and is building toward much more.</p></div><span class="pslot" data-pslot></span></div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="Story"><div class="wrap split story">
+    <div class="vis v2 rv" id="founderVideo" data-n="4:00"><span class="chip w"><i></i>Founder film</span><span class="play">▶</span></div>
+    <div><p class="lbl" style="margin-bottom:18px">01 / Origin</p><h2 data-split>It started with a <i>printer.</i></h2>
+      <p class="rv" style="margin-top:20px">Arjun’s five-year-old daughter typed her first sentence on his keyboard. They counted down together, five, four, three, two, one, and the printer started humming. She grabbed the page and ran to show her grandmother.</p>
+      <p class="rv">That look, I made this and it works, is what we want every crew to have when the drawing matches the job.</p>
+      <p class="rv">The name comes from the same place. Fab, for bringing something good to the drawing board. Chalk, for the chalk line on the slab, where the drawing meets the field.</p></div>
+  </div></section>
+  <section class="s s-haze" data-surface="light" data-section data-label="Point of view"><div class="wrap">
+    <div class="head"><div><p class="lbl">02 / Point of view</p><h2 data-split>Our point of view</h2><p class="lead rv">These aren’t taglines. They decide who we hire, how we train, what we charge for and which jobs we take.</p></div></div>
+    <div class="g3">
+      <div class="belief rv"><em>01</em><h3>Construction comes first.</h3><p>Technology serves the build, not the other way around. The field should never have to bend itself around the limits of our tools. If the process underneath is broken, more software won’t fix it.</p></div>
+      <div class="belief rv" style="--d:1"><em>02</em><h3>Technical leadership makes better projects.</h3><p>Better projects come from better planning and better decisions, not more hours or a larger team. Our value is the judgement we bring, not the hours we log.</p></div>
+      <div class="belief rv" style="--d:2"><em>03</em><h3>Learning compounds.</h3><p>Every job should leave the company, our clients and our people better prepared for the next one. We teach what we learn, inside and outside these walls.</p></div>
+    </div>
+  </div></section>
+  <section class="s" data-surface="dark" data-section data-label="No master key"><div class="wrap split">
+    <div><p class="lbl" style="margin-bottom:18px">03 / Approach</p><h2 data-split>There’s no master <i>key.</i></h2><p class="lead rv" style="margin-top:20px">Your job isn’t the same as anyone else’s. So we don’t show up with a key and look for a lock it fits. We find your lock first, then make the key with you.</p></div>
+    <svg class="art rv" id="lockArt" viewBox="60 60 800 300" role="img" aria-label="A conduit run bent to fit around an existing duct"></svg>
+  </div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="How we work"><div class="wrap">
+    <div class="head"><div><p class="lbl">04 / Values</p><h2 data-split>How we <i>work</i></h2></div></div>
+    <div class="g3">
+      <div class="card hov rv"><em class="n">01</em><h3>Think like an owner.</h3><p>Does it reduce labor? Does it reduce risk? Does it make the field’s job easier? Would we pay for it ourselves?</p></div>
+      <div class="card hov rv" style="--d:1"><em class="n">02</em><h3>Everything starts with constructability.</h3><p>Knowing the software without knowing why an electrician installs it a certain way isn’t enough.</p></div>
+      <div class="card hov rv" style="--d:2"><em class="n">03</em><h3>Teach what we learn.</h3><p>The company and the client should both be smarter after every job.</p></div>
+      <div class="card hov rv"><em class="n">04</em><h3>Automate the routine. Keep the judgement human.</h3><p>Software can take the repetitive work. Deciding what to do about it is still ours.</p></div>
+      <div class="card hov rv" style="--d:1"><em class="n">05</em><h3>Earn trust through competence.</h3><p>Not through claims. Through work that holds up in the field.</p></div>
+      <div class="card hov rv" style="--d:2"><em class="n">06</em><h3>We develop professionals, not operators.</h3><p>Everyone here is a specialist at something, and growing into someone who shapes how projects get delivered.</p></div>
+    </div>
+  </div></section>
+  <section class="s s-night" data-surface="dark" data-section data-label="Vision"><div class="wrap g2 vm">
+    <div class="rv"><p class="lbl">Vision</p><p class="big">To elevate electrical construction by building the world’s most respected team of technical leaders.</p></div>
+    <div class="rv" style="--d:1"><p class="lbl">Mission</p><p class="lead">We work with electrical contractors to solve complex construction problems through deep technical knowledge, digital delivery, constructability, prefabrication, automation and continuous learning. We measure success by the confidence we build in our clients, the growth of our teammates and the difference our work makes in the field.</p></div>
+  </div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="Founder's note"><div class="wrap"><div class="letter">
+    <p class="lbl" style="margin-bottom:18px">05 / A note from Arjun</p><h2 data-split>I’ve been in this mess <i>too.</i></h2>
+    <p class="rv">We have capable people doing complicated work, and too much of it still runs on tribal knowledge, disconnected information and software that wasn’t built around how people actually build.</p>
+    <p class="rv">A pretty model isn’t the same as a useful model. More tools don’t make a company more efficient. And “that’s just how construction works” isn’t a good enough answer for me.</p>
+    <p class="rv">I’m building FabChalk to be a group of people who know construction deeply and use technology to fix real problems. People who make someone’s Tuesday afternoon easier, not just a presentation look good. I want to do work my daughter will be proud of when she grows up.</p>
+    <p class="rv">If I’m wrong about something here, tell me. I’ll change my mind.</p>
+    <p class="sig rv">Arjun, founder</p>
+  </div></div></section>
+  <section class="s s-night" data-surface="dark" data-section data-label="Next"><div class="wrap g2 duo">
+    <a class="card rv" href="#/contact"><b>Work with us</b><p>Send us a scope, a schedule or a problem you can’t solve today.</p></a>
+    <a class="card rv" style="--d:1" href="#/careers"><b>Join us</b><p>For people who pick up problems rather than wait for them to be solved.</p></a>
+  </div></section>
+</div>
+
+<!-- ================================================= FIELD NOTES -->
+<div class="page" data-page="field-notes" data-title="Field notes — FabChalk" hidden>
+  <section class="s s-night hero phero" data-surface="dark" data-section data-label="Intro"><div class="wrap"><div><p class="lbl rv"><b>●</b> &nbsp;Field notes</p><h1 data-split>Here’s why it goes <i>wrong.</i></h1>
+    <p class="lead rv">Explainers on electrical construction, models and the field, for engineers, students, electricians and anyone learning the trade. No pitch at the end.</p>
+    <div class="chips rv" data-filter="#notesGrid"><button type="button" aria-pressed="true" data-f="all">All</button><button type="button" aria-pressed="false" data-f="coord">Coordination</button><button type="button" aria-pressed="false" data-f="prefab">Prefab</button><button type="button" aria-pressed="false" data-f="field">Field</button><button type="button" aria-pressed="false" data-f="tools">Tools and automation</button><button type="button" aria-pressed="false" data-f="bim">Working in BIM</button></div></div>
+    <span class="pslot" data-pslot></span></div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="Featured"><div class="wrap"><a class="feat" href="#/field-notes">
+    <div class="vis rv" data-n="08'"><span class="chip"><i></i>Coordination</span></div>
+    <div class="rv" style="--d:1"><p class="lbl">Coordination · 8 minute read</p><h2 style="margin:14px 0 16px">A pretty model isn’t the same as a useful model</h2><p class="lead">What makes a model useful to the people installing from it, and why the two get confused so often.</p><p style="margin-top:22px"><span class="more">Read the note</span></p></div>
+  </a></div></section>
+  <section class="s s-night" data-surface="dark" data-section data-label="All notes"><div class="wrap"><div class="g3" id="notesGrid">
+    <a class="card note rv" href="#/field-notes" data-cat="field"><span class="go">↗</span><small>Field</small><b>What a foreman needs on an install drawing, and what he doesn’t</b></a>
+    <a class="card note rv" style="--d:1" href="#/field-notes" data-cat="prefab"><span class="go">↗</span><small>Prefab</small><b>Spool sheets: what the prefab shop reads first</b></a>
+    <a class="card note rv" style="--d:2" href="#/field-notes" data-cat="coord"><span class="go">↗</span><small>Coordination</small><b>Hanger layouts, explained from the ground up</b></a>
+    <a class="card note rv" href="#/field-notes" data-cat="process"><span class="go">↗</span><small>Process</small><b>Tribal knowledge: where it hides and what it costs</b></a>
+    <a class="card note rv" style="--d:1" href="#/field-notes" data-cat="tools"><span class="go">↗</span><small>Tools and automation</small><b>What automation should take off your plate, and what it shouldn’t</b></a>
+    <a class="card note rv" style="--d:2" href="#/field-notes" data-cat="bim"><span class="go">↗</span><small>Working in BIM</small><b>From modeler to technical leader: what actually changes</b></a>
+  </div></div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="Explainers"><div class="wrap">
+    <div class="head"><div><p class="lbl">Video</p><h2 data-split>Five-minute <i>explainers</i></h2><p class="lead rv">Short videos on one idea each, shot at the desk or on site.</p></div></div>
+    <div class="g3"><div class="vis v2 rv" data-n="5:00"><span class="chip w"><i></i>Coming soon</span><span class="play">▶</span></div><div class="vis rv" style="--d:1" data-n="5:00"><span class="chip"><i></i>Coming soon</span><span class="play">▶</span></div><div class="vis v2 rv" style="--d:2" data-n="5:00"><span class="chip w"><i></i>Coming soon</span><span class="play">▶</span></div></div>
+  </div></section>
+</div>
+
+<!-- ================================================= CAREERS -->
+<div class="page" data-page="careers" data-title="Careers — FabChalk" hidden>
+  <section class="s s-night hero phero" data-surface="dark" data-section data-label="Intro"><div class="wrap"><div><p class="lbl rv"><b>●</b> &nbsp;Careers</p><h1 data-split>Nothing here is fully set up yet. That is the <i>job.</i></h1>
+    <p class="lead rv">Most of the time it will be chaotic. Workflows won’t be perfect, and some things will need figuring out. We want people who pick that up rather than wait for it to be solved.</p>
+    <div class="row rv"><button class="btn" type="button" data-scroll="#roles">See open roles</button><a class="btn btn-line" href="#/about" data-then="#founderVideo">Watch the founder video</a></div></div>
+    <span class="pslot" data-pslot></span></div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="What we look for"><div class="wrap">
+    <div class="head"><div><p class="lbl">01 / Attitude</p><h2 data-split>What we look <i>for</i></h2><p class="lead rv">We’ll take the right attitude over a long list of skills. Skills can be taught. These can’t.</p></div></div>
+    <div class="g3">
+      <div class="card hov rv"><em class="n">01</em><h3>Curiosity</h3><p>You want to know how a data center, a hospital or an airport gets powered because it’s interesting, not because it looks good on a résumé. You ask why we do it this way, and what happens if we don’t.</p></div>
+      <div class="card hov rv" style="--d:1"><em class="n">02</em><h3>Ownership</h3><p>You see a problem, pick it up and own it. Then you help the person next to you own theirs. We want people who build leaders, starting with themselves.</p></div>
+      <div class="card hov rv" style="--d:2"><em class="n">03</em><h3>Paving your own path</h3><p>You look at where we are today and see what we could be doing. Then you build it, and grow yourself and the company together.</p></div>
+    </div>
+  </div></section>
+  <section class="s s-night" data-surface="dark" data-section data-label="Questions"><div class="wrap split" style="align-items:start">
+    <div><p class="lbl" style="margin-bottom:18px">02 / Straight answers</p><h2 data-split>The questions you’re probably <i>asking.</i></h2><p class="lead rv" style="margin-top:18px">Straight answers. Where something doesn’t exist yet, we say so.</p></div>
+    <div class="qa rv">
+      <details open><summary>Will I have more influence here?</summary><p>Yes. There are very few layers between a good idea and how we work.</p></details>
+      <details><summary>Will I learn something new?</summary><p>On every job. And you’ll be expected to teach what you learn.</p></details>
+      <details><summary>Will I build something that lasts?</summary><p>Standards, tools and people that outlive the job they started on.</p></details>
+      <details><summary>Are the founders people I can trust?</summary><p>Watch the founder video, then ask us anything in the interview. We’d rather you decide with your eyes open.</p></details>
+      <details><summary>Is this company solving interesting problems?</summary><p>Data centers, hospitals, airports and industrial jobs, for electrical contractors who want more than a model. <a class="more" href="#/work">See the work</a></p></details>
+    </div>
+  </div></section>
+  <section class="s s-haze" data-surface="light" data-section data-label="One question"><div class="wrap split" style="align-items:start">
+    <div><p class="lbl" style="margin-bottom:18px">The one question we ask about every hire</p><p class="one rv">Will this person let us solve a problem for clients that we can’t solve today?</p></div>
+    <div class="rv" style="--d:1"><h3 style="font-size:30px">Six months or six years</h3><p class="lead" style="margin-top:12px">However long you stay, you should leave sharper than you came. We’d rather say that out loud. What we ask is that while you’re here, you make it better for everyone around you, whatever their skill level.</p></div>
+  </div></section>
+  <section class="s" id="roles" data-surface="dark" data-section data-label="Open roles"><div class="wrap">
+    <div class="head"><div><p class="lbl">03 / Roles</p><h2 data-split>Open <i>roles</i></h2></div></div>
+    <div class="roles rv">
+      <a href="#/contact"><b>Electrical BIM coordinator</b><span>Full-time</span><i>→</i></a>
+      <a href="#/contact"><b>Prefabrication detailer</b><span>Full-time</span><i>→</i></a>
+      <a href="#/contact"><b>Automation and tools developer</b><span>Full-time</span><i>→</i></a>
+    </div>
+    <div class="row rv" style="margin-top:30px;justify-content:space-between"><p class="lead" style="max-width:30em">Don’t see your role? Tell us which problem you’d solve for our clients that we can’t solve today.</p><a class="btn btn-line" href="#/contact">Write to us</a></div>
+  </div></section>
+  <section class="s s-tint" data-surface="light" data-section data-label="Hiring"><div class="wrap">
+    <div class="head"><div><p class="lbl">04 / Hiring</p><h2 data-split>How hiring <i>works</i></h2></div></div>
+    <ol class="hire">
+      <li class="card hov rv"><em class="n">01</em><h3>A conversation</h3><p>What you’ve built, what you’re curious about.</p></li>
+      <li class="card hov rv" style="--d:1"><em class="n">02</em><h3>A real problem</h3><p>A short exercise from an actual job. How you think matters more than the answer.</p></li>
+      <li class="card hov rv" style="--d:2"><em class="n">03</em><h3>Meet the team</h3><p>The people you’d work with day to day.</p></li>
+      <li class="card hov rv" style="--d:3"><em class="n">04</em><h3>A decision</h3><p>Either way, with a reason.</p></li>
+    </ol>
+  </div></section>
+</div>
+
+<!-- ================================================= CONTACT -->
+<div class="page" data-page="contact" data-title="Talk to us — FabChalk" hidden>
+  <section class="s s-night hero phero" data-surface="dark" data-section data-label="Intro"><div class="wrap"><div><p class="lbl rv"><b>●</b> &nbsp;Talk to us</p><h1 data-split>Tell us about the <i>job.</i></h1><p class="lead rv">Scope, schedule and your standards. We’ll come back with what it takes, what it costs and when it lands.</p></div><span class="pslot" data-pslot></span></div></section>
+  <section class="s" data-surface="dark" data-section data-label="The form"><div class="wrap contact">
+    <div class="rv">
+      <p class="lbl">What happens next</p>
+      <ol class="nexts"><li><em>01</em><span>We read the drawings and specs you send.</span></li><li><em>02</em><span>A call with someone who can answer technical questions.</span></li><li><em>03</em><span>A written scope, price and milestone schedule.</span></li></ol>
+      <p>Prefer email? <a class="more" href="mailto:hello@fabchalk.com">hello@fabchalk.com</a></p><p style="margin-top:8px">Looking for a job? <a class="more" href="#/careers">See careers</a></p>
+    </div>
+    <form class="card form rv" style="--d:1" id="form" novalidate>
+      <label>Name<input type="text" name="name" autocomplete="name" required></label>
+      <label>Company<input type="text" name="company" autocomplete="organization" required></label>
+      <label>Work email<input type="email" name="email" autocomplete="email" required></label>
+      <label>Phone (optional)<input type="tel" name="phone" autocomplete="tel"></label>
+      <label>Your role<select name="role"><option>BIM manager or director</option><option>Project manager</option><option>Superintendent or foreman</option><option>Prefab manager</option><option>Estimator</option><option>Other</option></select></label>
+      <label>Building type<select name="building"><option>Data center</option><option>Healthcare</option><option>Aviation</option><option>Industrial</option><option>Commercial</option><option>Other</option></select></label>
+      <fieldset class="wide"><legend>What do you need?</legend>
+        <label><input type="checkbox" name="need" value="Coordination"><span>Coordination</span></label><label><input type="checkbox" name="need" value="Install drawings"><span>Install drawings</span></label>
+        <label><input type="checkbox" name="need" value="Prefabrication"><span>Prefabrication</span></label><label><input type="checkbox" name="need" value="Constructability review"><span>Constructability review</span></label>
+        <label><input type="checkbox" name="need" value="Standards and content"><span>Standards and content</span></label><label><input type="checkbox" name="need" value="Extra capacity"><span>Extra capacity for my team</span></label>
+      </fieldset>
+      <label class="wide">Tell us about the job<textarea name="message" rows="5" placeholder="Scope, schedule, your standards and anything that worries you about this one."></textarea></label>
+      <label class="drop wide"><input type="file" id="files" multiple><span id="dropText">Drop drawings, specs or your standards here, or click to choose files</span></label>
+      <div class="wide"><button class="btn" type="submit">Send to FabChalk</button></div>
+      <p class="form-msg" id="formMsg" role="status"></p>
+    </form>
+  </div></section>
+</div>
+
+</main>
+
+<footer class="s s-night foot" data-surface="dark">
+  <div class="wrap">
+    <div class="foot-top">
+      <div><svg viewBox="0 0 200 200" width="56" height="56"><use href="#mark"/></svg><p style="margin-top:18px;max-width:300px">Electrical digital construction for electrical contractors.</p></div>
+      <nav aria-label="Footer">
+        <div><a href="#/work">Work</a><a href="#/what-we-do">What we do</a><a href="#/about">About</a></div>
+        <div><a href="#/field-notes">Field notes</a><a href="#/careers">Careers</a><a href="#/contact">Talk to us</a></div>
+        <div><a href="#">LinkedIn</a><a href="#">YouTube</a><a href="#">FabSlate, interactive shop drawings</a></div>
+      </nav>
+    </div>
+    <svg class="foot-word" viewBox="0 0 406 59" aria-hidden="true"><use href="#word"/></svg>
+    <div class="foot-base lbl"><span>© <span id="yr">2026</span> FabChalk LLC</span><span>hello@fabchalk.com</span></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag, attrs = {}, parent) => {
+    const el = document.createElementNS(NS, tag);
+    for (const k in attrs) {
+      if (String(attrs[k]).startsWith('var(')) el.style.setProperty(k, attrs[k]);   // CSS variables only work as styles
+      else el.setAttribute(k, attrs[k]);
+    }
+    if (parent) parent.appendChild(el);
+    return el;
+  };
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const INK = 'currentColor', body = document.body;
+  $('#yr').textContent = new Date().getFullYear();
+
+  /* ---------- side panel ---------- */
+  const panel = $('#panel');
+  const setMenu = open => { body.classList.toggle('menu-open', open); panel.setAttribute('aria-hidden', String(!open)); };
+  $$('[data-open-panel]').forEach(b => b.addEventListener('click', () => setMenu(true)));
+  $('#panelClose').addEventListener('click', () => setMenu(false));
+  $('#scrim').addEventListener('click', () => setMenu(false));
+
+  /* ---------- headlines split into words so they can rise one by one ---------- */
+  $$('[data-split]').forEach(h => {
+    let i = 0;
+    const wrap = node => {
+      if (node.nodeType === 3) {
+        const f = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (!part.trim()) { f.appendChild(document.createTextNode(part)); return; }
+          const w = document.createElement('span'); w.className = 'w';
+          const s = document.createElement('span'); s.textContent = part; s.style.setProperty('--i', i++);
+          w.appendChild(s); f.appendChild(w);
+        });
+        node.replaceWith(f);
+      } else [...node.childNodes].forEach(wrap);
+    };
+    [...h.childNodes].forEach(wrap);
+  });
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    io.unobserve(e.target);
+  }), { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+  const arm = root => $$('.rv, [data-split], .asks', root).forEach(el => { el.classList.remove('in'); io.observe(el); });
+
+  /* ---------- cards light up under the cursor ---------- */
+  document.addEventListener('pointermove', e => {
+    const c = e.target.closest && e.target.closest('.card');
+    if (!c) return;
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', e.clientX - r.left + 'px');
+    c.style.setProperty('--my', e.clientY - r.top + 'px');
+  }, { passive: true });
+
+  /* ---------- drawing kit: conduit with current running through it ---------- */
+  const COL = { y: 'var(--pf-y)', b: 'var(--pf-b)', n: 'var(--pf-n)' };
+  const P = (g, d, a) => svgEl('path', Object.assign({ d, fill: 'none' }, a), g);
+  const tube = (g, d, W, k) => {
+    P(g, d, { stroke: 'var(--bp)', 'stroke-width': W, 'stroke-linejoin': 'round' });
+    P(g, d, { stroke: COL[k], 'stroke-width': W - 3.4, 'stroke-linejoin': 'round' });
+    P(g, d, { class: 'cur', stroke: '#1B91FF', 'stroke-width': 2.2, 'stroke-dasharray': '3 21', 'stroke-linecap': 'round' });
+  };
+  const flange = (g, x, y, dir, s, W) => {
+    const L = W + 18, T = 13;
+    const r = dir === 'h' ? [s > 0 ? x : x - T, y - L / 2, T, L] : [x - L / 2, s > 0 ? y : y - T, L, T];
+    svgEl('rect', { x: r[0], y: r[1], width: r[2], height: r[3], rx: 3, fill: '#1B91FF', stroke: 'var(--bp)', 'stroke-width': 1.5 }, g);
+  };
+  const box = (g, x, y, k, S = 54) => {
+    svgEl('rect', { x, y, width: S, height: S, rx: 6, fill: COL[k], stroke: 'var(--bp)', 'stroke-width': 1.7 }, g);
+    svgEl('circle', { cx: x + S / 2, cy: y + S / 2, r: 9, fill: '#1B91FF', stroke: 'var(--bp)', 'stroke-width': 1.7 }, g);
+  };
+  const drawPiece = (g, def) => {
+    const W = def.k === 'y' ? 34 : 20;
+    tube(g, def.d, W, def.k);
+    (def.ends || []).forEach(e => flange(g, e[0], e[1], e[2], e[3], W));
+    if (def.box) box(g, def.box[0], def.box[1], def.k);
+    return W;
+  };
+  const label = (g, x, y, t, anchor = 'middle') => { svgEl('text', { x, y, 'text-anchor': anchor }, g).textContent = t; };
+  const paper = (g, x, y, w, h, fill = 'var(--here)') => svgEl('rect', { x, y, width: w, height: h, rx: 4, fill, stroke: INK, 'stroke-width': 1.5 }, g);
+  const hatch = (g, x, y, w, h) => {
+    let d = '';
+    for (let yy = y + 14; yy < y + h; yy += 14) d += `M${x} ${yy + 8} l${w} -14 `;
+    P(g, d, { stroke: INK, 'stroke-width': 0.8, 'stroke-opacity': 0.4 });
+  };
+  const wall = (g, y, h, t) => { paper(g, 40, y, 34, h); hatch(g, 40, y, 34, h - 8); label(g, 40, y - 12, t, 'start'); };
+  const cabinet = (g, x, y, t) => {
+    svgEl('rect', { x, y, width: 80, height: 86, rx: 8, fill: 'var(--here)', stroke: INK, 'stroke-width': 1.5 }, g);
+    svgEl('rect', { x: x + 12, y: y + 12, width: 56, height: 22, rx: 4, fill: '#1B91FF' }, g);
+    P(g, `M${x + 12} ${y + 46} h56 M${x + 12} ${y + 58} h56 M${x + 12} ${y + 70} h34`, { stroke: INK, 'stroke-width': 2, 'stroke-opacity': 0.6, 'stroke-linecap': 'round' });
+    label(g, x + 40, y - 10, t);
+  };
+  const H = (x1, x2, y) => [[x1, y, 'h', 1], [x2, y, 'h', -1]];
+
+  /* ---------- home: hero model ---------- */
+  const art = $('#heroArt');
+  const HERO = [
+    { k: 'b', d: 'M40 240 H240 Q270 240 270 270 V440', ends: [[40, 240, 'h', 1], [270, 440, 'v', -1]] },
+    { k: 'b', d: 'M480 440 V420 Q480 400 500 400 H960', ends: [[480, 440, 'v', -1], [960, 400, 'h', -1]] },
+    { k: 'n', d: 'M960 90 H830 Q800 90 800 120 V250', ends: [[960, 90, 'h', -1]], box: [773, 246] },
+    { k: 'y', d: 'M40 150 H330 Q390 150 390 210 V270 Q390 330 450 330 H640 Q700 330 700 270 V130', ends: [[40, 150, 'h', 1], [700, 130, 'v', 1], [200, 150, 'h', 1], [540, 330, 'h', 1]] },
+  ];
+  // fittings stay as drawn shapes; the conduit itself is particles on the canvas behind them
+  HERO.forEach(def => {
+    const g = svgEl('g', {}, art), W = def.k === 'y' ? 34 : 20;
+    (def.ends || []).forEach(e => flange(g, e[0], e[1], e[2], e[3], W));
+    if (def.box) box(g, def.box[0], def.box[1], def.k);
+  });
+
+  /* particles: walls hold the pipe's outline, the ones inside flow along it as current;
+     all of them scatter away from the pointer and spring back */
+  (() => {
+    const cv = $('#heroDust'), ctx = cv.getContext('2d'), VW = 1000, STEP = 2, R = 90;
+    let parts = null, mx = -999, my = -999, rect = null;
+    let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const build = () => {
+      parts = [];
+      HERO.forEach(def => {
+        const p = svgEl('path', { d: def.d, fill: 'none' }, art);
+        const L = p.getTotalLength(), W = def.k === 'y' ? 34 : 20, n = Math.floor(L / STEP);
+        const lut = new Float32Array((n + 2) * 4);
+        for (let i = 0; i <= n + 1; i++) {
+          const s = Math.min(L, i * STEP), a = p.getPointAtLength(s), b = p.getPointAtLength(Math.min(L, s + 1)), c = p.getPointAtLength(Math.max(0, s - 1));
+          const dx = b.x - c.x, dy = b.y - c.y, d = Math.hypot(dx, dy) || 1;
+          lut.set([a.x, a.y, -dy / d, dx / d], i * 4);
+        }
+        p.remove();
+        const count = Math.round(L * (W === 34 ? 2.3 : 1.5));
+        for (let i = 0; i < count; i++) {
+          const wall = rnd() < 0.55, side = rnd() < 0.5 ? -1 : 1;
+          parts.push({
+            lut, n, L: n * STEP, t: rnd() * n * STEP, wall,
+            off: wall ? side * (W / 2 + (rnd() - 0.5) * 1.8) : (rnd() - 0.5) * (W - 7),
+            v: wall ? 0 : 0.25 + rnd() * 0.55, s: wall ? 1.1 + rnd() * 0.5 : 0.8 + rnd() * 1.2,
+            a: 0.45 + rnd() * 0.55, ph: rnd() * 6.28, x: 0, y: 0, vx: 0, vy: 0, fresh: true,
+          });
+        }
+      });
+    };
+    document.addEventListener('pointermove', e => {
+      if (!rect || !rect.width) return;
+      mx = (e.clientX - rect.left) / rect.width * VW; my = (e.clientY - rect.top) / rect.width * VW;
+    }, { passive: true });
+    document.addEventListener('pointerup', e => { if (e.pointerType === 'touch') mx = my = -999; });
+    const frame = now => {
+      requestAnimationFrame(frame);
+      if (!cv.offsetParent) return;
+      rect = cv.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > innerHeight || !rect.width) return;
+      if (!parts) build();
+      const dpr = Math.min(2, devicePixelRatio || 1), w = Math.round(rect.width * dpr), h = Math.round(rect.height * dpr);
+      if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+      const k = w / VW;
+      ctx.clearRect(0, 0, w, h);
+      for (let q = 0; q < parts.length; q++) {
+        const p = parts[q];
+        if (p.v && !reduced) { p.t += p.v; if (p.t >= p.L) { p.t -= p.L; p.fresh = true; } }
+        const f = p.t / STEP, i = Math.min(p.n, f | 0), u = f - i, j = i * 4, l = p.lut;
+        const hx = l[j] + (l[j + 4] - l[j]) * u + l[j + 2] * p.off, hy = l[j + 1] + (l[j + 5] - l[j + 1]) * u + l[j + 3] * p.off;
+        if (p.fresh) { p.x = hx; p.y = hy; p.vx = p.vy = 0; p.fresh = false; }
+        const dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
+        let hot = 0;
+        if (d2 < R * R) { const d = Math.sqrt(d2) || 1; hot = 1 - d / R; p.vx += dx / d * hot * 3; p.vy += dy / d * hot * 3; }
+        p.vx = (p.vx + (hx - p.x) * 0.05) * 0.84; p.vy = (p.vy + (hy - p.y) * 0.05) * 0.84;
+        p.x += p.vx; p.y += p.vy;
+        const away = Math.min(1, (Math.abs(hx - p.x) + Math.abs(hy - p.y)) / 30);
+        ctx.globalAlpha = Math.min(1, p.a * (0.72 + 0.28 * Math.sin(now * 0.002 + p.ph)) + away * 0.5);
+        ctx.fillStyle = p.wall ? (away > 0.25 ? '#8CC6FF' : '#E8F4FF') : '#1B91FF';
+        const s = p.s * k * (1 + away * 0.9);
+        ctx.beginPath(); ctx.arc(p.x * k, p.y * k, s, 0, 6.2832); ctx.fill();
+      }
+    };
+    requestAnimationFrame(frame);
+  })();
+  cabinet(art, 660, 44, 'LP-2A');
+  [['M120 133 V96 H146', 120, 133, 154, 100, '01 · MODELED'], ['M750 200 V318', 750, 200, 716, 334, '02 · CLASH-FREE'], ['M860 410 V436', 860, 410, 870, 448, '03 · SPOOLED']]
+    .forEach(([d, x, y, tx, ty, t]) => {
+      svgEl('path', { class: 'lead-l', d }, art);
+      svgEl('circle', { cx: x, cy: y, r: 3.5, fill: '#1B91FF' }, art);
+      label(art, tx, ty, t, 'start');
+    });
+
+  /* ---------- home: before/after, busway vs. hanger layout ---------- */
+  const HANGERS = [180, 400, 620];
+  const scene = (svg, fixed) => {
+    const g = svgEl('g', {}, svg);
+    paper(g, 60, 170, 680, 60, 'var(--pf-b)'); hatch(g, 60, 170, 680, 52);
+    label(g, 76, 160, 'BUSWAY · 2000A', 'start');
+    HANGERS.forEach((x, i) => {
+      const y1 = fixed ? 128 : 186, y2 = fixed ? 272 : 214;
+      P(g, `M${x} ${fixed ? 112 : 150} V${fixed ? 288 : 250}`, { stroke: INK, 'stroke-width': 3, 'stroke-linecap': 'round' });
+      [y1, y2].forEach(y => svgEl('circle', { cx: x, cy: y, r: 7, fill: fixed ? '#1B91FF' : 'var(--here)', stroke: INK, 'stroke-width': 1.6 }, g));
+      if (!fixed) {
+        const c = svgEl('g', { class: 'clash' }, g);
+        svgEl('circle', { class: 'ring', cx: x, cy: 200, r: 17, style: `animation-delay:${i * 0.3}s` }, c);
+        svgEl('circle', { cx: x, cy: 200, r: 17 }, c);
+        P(c, `M${x - 7} 193 l14 14 M${x + 7} 193 l-14 14`, {});
+      }
+    });
+    label(g, 400, fixed ? 336 : 300, fixed ? 'TRAPEZE HANGERS · RODS CLEAR OF BUSWAY' : 'HANGER RODS LAND INSIDE THE BUSWAY');
+  };
+  scene($('#vBefore'), false); scene($('#vAfter'), true);
+  const stage = $('#vStage'), range = $('#vRange'), viewer = $('#viewer');
+  const setView = v => {
+    stage.style.setProperty('--x', v + '%');
+    const left = HANGERS.filter(x => x / 800 * 100 > v).length;
+    $('#vCount').textContent = left;
+    viewer.classList.toggle('clean', left === 0);
+    $('#vStatus').textContent = left ? 'Clashes · busway vs. hangers' : 'Coordinated · installs once';
+  };
+  range.addEventListener('input', () => setView(+range.value));
+  setView(+range.value);
+
+  /* ---------- home: the statement lights up as it is read ---------- */
+  const sayEl = $('#say');
+  sayEl.innerHTML = sayEl.textContent.split(' ').map(w => `<span>${w}</span>`).join(' ');
+  const sayWords = $$('span', sayEl);
+  const onSay = () => {
+    if (sayEl.closest('[hidden]')) return;
+    const r = sayEl.getBoundingClientRect();
+    const n = reduced ? sayWords.length : Math.round(clamp((innerHeight * 0.86 - r.top) / (r.height + innerHeight * 0.12)) * sayWords.length);
+    sayWords.forEach((w, i) => w.classList.toggle('on', i < n));
+  };
+
+  /* ---------- home: the same model, three different jobs ---------- */
+  const ROLES = [
+    ['Your standards, your naming, your tools.', 'You built your department a certain way for a reason. We work as an extension of your team, inside your templates and workflow, beside your BIM engineers, not around them.',
+      ['We learn your standard once and keep it on every job after.', 'When we hit a conflict, you get the condition and the options. Your call.', 'The same people on your jobs, not a rotating bench.'], 'Your standard → our model', ''],
+    ['Here is the scope. What does it take?', 'You get a straight answer: what it takes, what it costs and when it lands. How we get there is our problem.',
+      ['A price you can plan around, with every assumption written down.', 'Milestones tied to your schedule, not ours.', 'One person who answers for the whole scope.'], 'Model → spools → install drawings', 'v3'],
+    ['Drawings your crew can build from, before your crew gets there.', 'Superintendents, foremen and prefab managers live with our work every day. We draw for the way electricians actually install.',
+      ['Every detail needed to install, and nothing that gets in the way.', 'Ready when your people and material are on site.', 'If something doesn’t work in the field, we want to hear it first.'], 'On site, drawing in hand', 'v2'],
+  ];
+  const roleBtns = $$('#roleTabs button'), rolePanel = $('#rolePanel');
+  const openRole = i => {
+    roleBtns.forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+    const [h, p, items, cap, v] = ROLES[i];
+    rolePanel.innerHTML = `<div class="card"><h3>${h}</h3><p class="lead">${p}</p><ul class="ticks">${items.map(t => `<li>${t}</li>`).join('')}</ul></div>
+      <div class="vis ${v}" data-n="0${i + 1}" style="min-height:300px${v === 'v2' ? ';box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)' : ''}"><span class="chip ${v === 'v2' ? 'w' : ''}"><i></i>${cap}</span></div>`;
+    rolePanel.classList.remove('swap'); void rolePanel.offsetWidth; rolePanel.classList.add('swap');
+  };
+  roleBtns.forEach((b, i) => b.addEventListener('click', () => openRole(i)));
+  openRole(0);
+
+  /* ---------- filters (work, field notes) ---------- */
+  $$('[data-filter]').forEach(bar => {
+    const grid = $(bar.dataset.filter);
+    $$('button', bar).forEach(b => b.addEventListener('click', () => {
+      $$('button', bar).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      let n = 0;
+      $$('[data-cat]', grid).forEach(card => { const on = b.dataset.f === 'all' || card.dataset.cat === b.dataset.f; card.hidden = !on; if (on) { n++; card.classList.add('in'); } });
+      if (grid.id === 'workGrid') $('#workCount').textContent = `${n} project${n === 1 ? '' : 's'}`;
+      grid.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+    }));
+  });
+
+  /* ---------- what we do: six steps, the room builds up ---------- */
+  const stepper = $('#stepper'), steps = $$('button', stepper), room = $('#room');
+  let step = -1, timer = null;
+  const setStep = i => {
+    step = i;
+    steps.forEach((b, j) => b.setAttribute('aria-selected', String(i === j)));
+    $$('[data-s]', room).forEach(el => el.classList.toggle('on', +el.dataset.s <= i + 1));
+    $('#roomCap').textContent = `Step ${i + 1} · ${$('b', steps[i]).textContent}`;
+  };
+  steps.forEach((b, i) => b.addEventListener('click', () => { clearInterval(timer); stepper.classList.remove('auto'); setStep(i); }));
+  new IntersectionObserver((es, o) => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    if (step < 0) setStep(0);
+    if (reduced) { stepper.classList.remove('auto'); setStep(5); }
+    else if (stepper.classList.contains('auto')) timer = setInterval(() => setStep((step + 1) % steps.length), 4500);
+    o.disconnect();
+  }), { threshold: 0.3 }).observe(room);
+
+  /* ---------- about: no master key ---------- */
+  const lock = $('#lockArt');
+  paper(lock, 360, 150, 180, 110, 'var(--pf-b)'); P(lock, 'M360 150 L540 260 M540 150 L360 260', { stroke: INK, 'stroke-width': 0.8, 'stroke-opacity': 0.5 });
+  label(lock, 450, 282, 'EXISTING DUCT');
+  drawPiece(svgEl('g', {}, lock), { k: 'y', d: 'M80 215 H250 Q300 215 300 165 V150 Q300 100 350 100 H550 Q600 100 600 150 V165 Q600 215 650 215 H840',
+    ends: [[80, 215, 'h', 1], [840, 215, 'h', -1], [226, 215, 'h', 1], [360, 100, 'h', -1], [540, 100, 'h', 1], [674, 215, 'h', -1]] });
+
+  /* ---------- home: the spool puzzle ---------- */
+  const LEVELS = [
+    { name: 'Ceiling run',
+      defs: [
+        { k: 'y', d: 'M80 150 H300', ends: H(80, 300, 150) },
+        { k: 'y', d: 'M300 150 H326 Q380 150 380 204 V250', ends: [[300, 150, 'h', 1], [380, 250, 'v', -1]] },
+        { k: 'y', d: 'M380 250 V296 Q380 350 434 350 H520', ends: [[380, 250, 'v', 1], [520, 350, 'h', -1]] },
+        { k: 'y', d: 'M520 350 H740', ends: H(520, 740, 350) },
+        { k: 'y', d: 'M740 350 H756 Q800 350 800 306 V236', ends: [[740, 350, 'h', 1], [800, 236, 'v', 1]] },
+        { k: 'b', d: 'M80 262 H232', ends: [[80, 262, 'h', 1]], box: [228, 235] },
+        { k: 'n', d: 'M494 150 H636 Q670 150 670 184 V262', ends: [[670, 262, 'v', -1]], box: [444, 123] },
+      ],
+      scene: g => { wall(g, 100, 220, 'WALL · GRID A'); cabinet(g, 760, 150, 'LP-2A'); paper(g, 643, 262, 54, 40); label(g, 670, 320, 'JB-04'); } },
+    { name: 'Mech room drop',
+      defs: [
+        { k: 'y', d: 'M140 126 V240', ends: [[140, 126, 'v', 1], [140, 240, 'v', -1]] },
+        { k: 'y', d: 'M140 240 V296 Q140 350 194 350 H280', ends: [[140, 240, 'v', 1], [280, 350, 'h', -1]] },
+        { k: 'y', d: 'M280 350 H500', ends: H(280, 500, 350) },
+        { k: 'y', d: 'M500 350 H566 Q620 350 620 296 V240', ends: [[500, 350, 'h', 1], [620, 240, 'v', 1]] },
+        { k: 'y', d: 'M620 240 V126', ends: [[620, 240, 'v', -1], [620, 126, 'v', 1]] },
+        { k: 'b', d: 'M250 170 H400', ends: [[400, 170, 'h', -1]], box: [200, 143] },
+        { k: 'n', d: 'M400 170 H446 Q480 170 480 204 V262', ends: [[400, 170, 'h', 1]], box: [453, 258] },
+      ],
+      scene: g => { cabinet(g, 100, 40, 'AHU-1'); cabinet(g, 580, 40, 'AHU-2'); } },
+    { name: 'Conduit rack',
+      defs: [
+        { k: 'b', d: 'M80 120 H300', ends: H(80, 300, 120) },
+        { k: 'b', d: 'M300 120 H520 Q554 120 554 154 V370', ends: [[300, 120, 'h', 1], [554, 370, 'v', -1]] },
+        { k: 'n', d: 'M80 180 H300', ends: H(80, 300, 180) },
+        { k: 'n', d: 'M300 180 H460 Q494 180 494 214 V370', ends: [[300, 180, 'h', 1], [494, 370, 'v', -1]] },
+        { k: 'y', d: 'M80 270 H260', ends: H(80, 260, 270) },
+        { k: 'y', d: 'M260 270 H346 Q400 270 400 324 V370', ends: [[260, 270, 'h', 1], [400, 370, 'v', -1]] },
+      ],
+      scene: g => { wall(g, 80, 240, 'WALL · GRID C'); paper(g, 356, 370, 244, 44); label(g, 478, 432, 'FLOOR TRENCH · T-1'); } },
+    { name: 'Around the duct',
+      defs: [
+        { k: 'y', d: 'M80 215 H240', ends: H(80, 240, 215) },
+        { k: 'y', d: 'M240 215 H250 Q300 215 300 165 V150 Q300 100 350 100 H360', ends: [[240, 215, 'h', 1], [360, 100, 'h', -1]] },
+        { k: 'y', d: 'M360 100 H540', ends: H(360, 540, 100) },
+        { k: 'y', d: 'M540 100 H550 Q600 100 600 150 V165 Q600 215 650 215 H660', ends: [[540, 100, 'h', 1], [660, 215, 'h', -1]] },
+        { k: 'y', d: 'M660 215 H780', ends: H(660, 780, 215) },
+        { k: 'b', d: 'M80 330 H300', ends: H(80, 300, 330) },
+        { k: 'n', d: 'M300 330 H600', ends: [[300, 330, 'h', 1]], box: [596, 303] },
+      ],
+      scene: g => {
+        wall(g, 160, 220, 'WALL · GRID E'); cabinet(g, 780, 172, 'MCC-1');
+        paper(g, 360, 150, 180, 110, 'var(--pf-b)'); P(g, 'M360 150 L540 260 M540 150 L360 260', { stroke: INK, 'stroke-width': 0.8, 'stroke-opacity': 0.5 });
+        label(g, 450, 280, 'SUPPLY DUCT · IN THE WAY');
+      } },
+  ];
+  const SIZE = { y: '4" RMC', b: '1" EMT', n: '¾" EMT' };
+  const feet = px => { const inches = Math.round(px * 0.6); return `${Math.floor(inches / 12)}'-${inches % 12}"`; };
+  const board = $('#pzBoard'), pz = $('#puzzle'), pzStatus = $('#pzStatus'), pzCount = $('#pzCount'), pzNext = $('#pzNext');
+  let level = 0, api = null, buildId = 0;
+  const showSpool = p => {
+    $$('.pz-piece', board).forEach(g => g.classList.toggle('sel', g === p.g));
+    const ends = [p.def.ends && p.def.ends.length ? `${p.def.ends.length} coupling${p.def.ends.length > 1 ? 's' : ''}` : '', p.def.box ? 'junction box' : ''].filter(Boolean).join(' + ');
+    [['#spTag', p.tag], ['#spDesc', `${LEVELS[level].name} · spool ${p.i + 1} of ${api.pieces.length}`], ['#spSize', SIZE[p.def.k]], ['#spLen', feet(p.len)],
+      ['#spBend', p.bends ? `${p.bends} × 90°` : 'Straight'], ['#spEnds', ends], ['#spSeq', `${p.i + 1}`]].forEach(([id, v]) => { $(id).textContent = v; });
+    $('#spState').textContent = p.fit ? 'Installed' : 'Loose';
+  };
+  const build = () => {
+    const mine = ++buildId;
+    board.replaceChildren();
+    const { defs, scene: draw, name } = LEVELS[level];
+    $('#pzLevel').textContent = `Package ${level + 1} of ${LEVELS.length} · ${name}`;
+    draw(svgEl('g', { class: 'pz-fixed' }, board));
+    const ghost = svgEl('g', { class: 'pz-ghost' }, board);
+    defs.forEach(p => {
+      P(ghost, p.d, { class: 'trk', 'stroke-width': (p.k === 'y' ? 34 : 20) + 8 });
+      P(ghost, p.d, { class: 'mid' });
+      if (p.box) svgEl('rect', { x: p.box[0], y: p.box[1], width: 54, height: 54, rx: 6 }, ghost);
+    });
+    const pieces = defs.map((def, i) => {
+      const g = svgEl('g', { class: 'pz-piece', tabindex: 0, role: 'button', 'aria-label': `Spool ${i + 1} of ${defs.length}` }, board);
+      const bob = svgEl('g', { class: 'bob', style: `animation-delay:${-i * 0.5}s` }, g);
+      const pop = svgEl('g', { class: 'pop' }, bob);
+      const W = drawPiece(pop, def);
+      const hit = P(pop, def.d, { class: 'hit', 'stroke-width': W + 26 });
+      if (def.box) svgEl('rect', { class: 'hit', x: def.box[0], y: def.box[1], width: 54, height: 54 }, pop);
+      const hb = hit.getBBox();
+      const bb = def.box ? {
+        x: Math.min(hb.x, def.box[0]), y: Math.min(hb.y, def.box[1]),
+        width: Math.max(hb.x + hb.width, def.box[0] + 54) - Math.min(hb.x, def.box[0]),
+        height: Math.max(hb.y + hb.height, def.box[1] + 54) - Math.min(hb.y, def.box[1]),
+      } : hb;
+      const piece = { g, pop, bb, def, i, pad: W / 2 + 14, x: 0, y: 0, fit: false, tag: `SP-0${i + 1}`, len: hit.getTotalLength(), bends: (def.d.match(/Q/g) || []).length };
+      piece.move = (x, y) => { piece.x = x; piece.y = y; g.style.transform = `translate(${x}px,${y}px)`; };
+      piece.tilt = deg => { pop.style.transform = `rotate(${deg}deg)`; };
+      return piece;
+    });
+    const refresh = () => {
+      if (mine !== buildId) return;
+      const n = pieces.filter(p => p.fit).length, done = n === pieces.length, last = level === LEVELS.length - 1;
+      pzCount.textContent = `${n} / ${pieces.length} fitted`;
+      pz.classList.toggle('done', done);
+      board.setAttribute('viewBox', done ? '0 0 900 470' : '0 0 900 900');
+      pzNext.hidden = !done;
+      pzNext.textContent = last ? 'Start over ↺' : 'Next package →';
+      pzStatus.textContent = done ? (last ? 'All four fitted. Now send us a real one.' : 'Fits first time. Current is running.') : n ? `${n} in, ${pieces.length - n} to go.` : 'Drag each spool into its slot.';
+    };
+    const fit = p => {
+      p.g.classList.add('snap', 'fit'); p.move(0, 0); p.tilt(0); p.fit = true;
+      if (mine === buildId && p.g.classList.contains('sel')) $('#spState').textContent = 'Installed';
+      refresh();
+    };
+    const scatter = animate => {                 // same starting layout every time for a given package
+      let seed = 20261 + level * 977;
+      const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      const X0 = 22, W = 856, Y0 = 458, HH = 420;
+      const size = p => ({ w: p.bb.width + p.pad * 2, h: p.bb.height + p.pad * 2 });
+      const pack = order => {
+        const rows = [];
+        order.forEach(p => {
+          const { w, h } = size(p);
+          let row = rows.find(r => r.used + w <= W);
+          if (!row) rows.push(row = { used: 0, h: 0, items: [] });
+          row.items.push(p); row.used += w; row.h = Math.max(row.h, h);
+        });
+        return rows;
+      };
+      const total = rows => rows.reduce((a, r) => a + r.h, 0);
+      let rows;
+      for (let i = 0; i < 80; i++) {
+        rows = pack(pieces.map(p => [rnd(), p]).sort((a, b) => a[0] - b[0]).map(a => a[1]));
+        if (total(rows) <= HH) break;
+      }
+      if (total(rows) > HH) rows = pack([...pieces].sort((a, b) => size(b).h - size(a).h));
+      const vGap = Math.max(0, HH - total(rows)) / rows.length;
+      let y = Y0;
+      rows.forEach(row => {
+        const gap = (W - row.used) / (row.items.length + 1);
+        let x = X0;
+        row.items.forEach(p => {
+          const { w, h } = size(p);
+          x += gap * (0.5 + rnd() * 0.5);
+          const py = y + rnd() * (row.h - h + vGap);
+          p.fit = false;
+          p.g.classList.remove('fit');
+          p.g.classList.toggle('snap', animate);
+          p.move(x + p.pad - p.bb.x, py + p.pad - p.bb.y);
+          p.tilt((rnd() * 12 - 6).toFixed(1));
+          x += w;
+        });
+        y += row.h + vGap;
+      });
+      refresh();
+    };
+    scatter(false);
+    const toSvg = e => new DOMPoint(e.clientX, e.clientY).matrixTransform(board.getScreenCTM().inverse());
+    pieces.forEach(p => {
+      let start = null;
+      p.g.addEventListener('pointerdown', e => {
+        showSpool(p);
+        if (p.fit) return;
+        e.preventDefault();
+        const pt = toSvg(e);
+        start = { px: pt.x, py: pt.y, x: p.x, y: p.y };
+        p.g.classList.remove('snap'); p.g.classList.add('drag');
+        board.appendChild(p.g);
+        p.g.setPointerCapture(e.pointerId);
+      });
+      p.g.addEventListener('pointermove', e => {
+        if (!start) return;
+        const pt = toSvg(e);
+        p.move(start.x + pt.x - start.px, start.y + pt.y - start.py);
+      });
+      const end = () => {
+        if (!start) return;
+        start = null;
+        p.g.classList.remove('drag');
+        if (Math.hypot(p.x, p.y) < 48) { fit(p); showSpool(p); }
+      };
+      p.g.addEventListener('pointerup', end);
+      p.g.addEventListener('pointercancel', end);
+      p.g.addEventListener('focus', () => showSpool(p));
+      p.g.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !p.fit) { e.preventDefault(); fit(p); showSpool(p); } });
+    });
+    api = { pieces, fit, scatter };
+    showSpool(pieces[0]);
+  };
+  $('#pzAuto').addEventListener('click', () => { const a = api; a.pieces.filter(p => !p.fit).forEach((p, i) => setTimeout(() => a.fit(p), reduced ? 0 : i * 170)); });
+  $('#pzReset').addEventListener('click', () => { api.scatter(true); $('#spState').textContent = 'Loose'; });
+  pzNext.addEventListener('click', () => { level = (level + 1) % LEVELS.length; build(); });
+
+  /* ---------- pencil: the intro, then it lands on the page ---------- */
+  const dp = $('#dpencil'), sketch = $('#sketch'), erase = $('#erase');
+  const TIP = { x: 4, y: 82 };
+  const slot = () => $$('[data-pslot]').find(el => !el.closest('[hidden]') && el.offsetParent !== null);
+  const placePencil = () => {
+    if (dp.classList.contains('used')) return;
+    if (body.classList.contains('intro-on')) {
+      dp.hidden = false;
+      dp.style.left = innerWidth / 2 - dp.offsetWidth / 2 + scrollX + 'px';
+      dp.style.top = innerHeight * 0.57 + scrollY + 'px';
+      return;
+    }
+    const s = slot();
+    dp.hidden = !s;
+    if (!s) return;
+    const r = s.getBoundingClientRect();
+    dp.style.left = Math.max(8, r.left + scrollX) + 'px';
+    dp.style.top = r.top + scrollY + 'px';
+  };
+  const resetPencil = () => { sketch.replaceChildren(); erase.classList.remove('on'); dp.classList.remove('used', 'flip'); placePencil(); };
+  const endIntro = () => {
+    if (!body.classList.contains('intro-on')) return;
+    body.classList.remove('intro-on');
+    try { sessionStorage.setItem('fc-intro', '1'); } catch (e) {}
+    resetPencil();
+  };
+  try { if (sessionStorage.getItem('fc-intro') || reduced) body.classList.remove('intro-on'); } catch (e) {}
+  $('#introSkip').addEventListener('click', endIntro);
+  addEventListener('keydown', e => { if (e.key === 'Escape') { endIntro(); setMenu(false); } });
+  addEventListener('resize', placePencil);
+  addEventListener('load', placePencil);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placePencil);
+
+  let line = null, grab = null, drawn = 0, lastPt = null;
+  dp.addEventListener('pointerdown', e => {
+    if (e.target.closest('.erase')) return;
+    e.preventDefault();
+    const r = dp.getBoundingClientRect();
+    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    dp.classList.add('drag', 'used');
+    dp.setPointerCapture(e.pointerId);
+    line = svgEl('polyline', { points: '' }, sketch);
+    drawn = 0; lastPt = null;
+    if (sketch.children.length > 40) sketch.firstElementChild.remove();
+  });
+  dp.addEventListener('pointermove', e => {
+    if (!grab) return;
+    const de = document.documentElement, w = dp.offsetWidth, k = w / 86;
+    const x = clamp(e.clientX + scrollX - grab.dx, 0, de.clientWidth - w);
+    const y = clamp(e.clientY + scrollY - grab.dy, 0, de.scrollHeight - w - 40);
+    dp.classList.toggle('flip', x + 170 > de.clientWidth);
+    dp.style.left = x + 'px'; dp.style.top = y + 'px';
+    const pt = sketch.createSVGPoint();
+    pt.x = x + TIP.x * k; pt.y = y + TIP.y * k;
+    if (lastPt) drawn += Math.hypot(pt.x - lastPt.x, pt.y - lastPt.y);
+    lastPt = pt;
+    line.points.appendItem(pt);
+  });
+  const drop = () => {
+    if (!grab) return;
+    grab = null;
+    dp.classList.remove('drag');
+    if (line && line.points.numberOfItems < 2) line.remove();
+    if (body.classList.contains('intro-on')) {
+      if (drawn > 140) setTimeout(endIntro, 350); else resetPencil();
+      return;
+    }
+    erase.classList.toggle('on', sketch.children.length > 0);
+  };
+  dp.addEventListener('pointerup', drop);
+  dp.addEventListener('pointercancel', drop);
+  erase.addEventListener('click', () => { sketch.replaceChildren(); erase.classList.remove('on'); });
+
+  /* ---------- header + right rail follow the scroll ---------- */
+  const hdr = $('#hdr'), rail = $('#rail'), railList = $('#railList'), foot = $('.foot');
+  let lastY = scrollY, sects = [], railLinks = [], current = -1;
+  const buildRail = page => {
+    sects = $$('[data-section]', page);
+    railList.innerHTML = sects.map((s, i) => `<li><a href="#" data-i="${i}"><span>${s.dataset.label}</span><i></i></a></li>`).join('');
+    railLinks = $$('a', railList);
+    railLinks.forEach(a => a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); sects[+a.dataset.i].scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }));
+    current = -1;
+  };
+  const surfaceAt = y => {
+    for (const s of [...sects, foot]) { const r = s.getBoundingClientRect(); if (r.top <= y && r.bottom > y) return s.dataset.surface; }
+    return 'dark';
+  };
+  const onScroll = () => {
+    const y = scrollY;
+    if (y > lastY + 4 && y > 140) hdr.classList.add('is-down');
+    else if (y < lastY - 4 || y <= 140) hdr.classList.remove('is-down');
+    hdr.classList.toggle('is-solid', y > 40);    // translucent bar whenever the page is scrolled, so nothing shows through the logo
+    lastY = y;
+    hdr.dataset.on = surfaceAt(36);
+    rail.dataset.on = surfaceAt(innerHeight / 2);
+    let idx = 0;
+    sects.forEach((s, i) => { if (s.getBoundingClientRect().top <= innerHeight * 0.45) idx = i; });
+    if (idx !== current) { current = idx; railLinks.forEach((a, i) => a.classList.toggle('on', i === idx)); }
+    onSay();
+  };
+  let ticking = false;
+  addEventListener('scroll', () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { onScroll(); ticking = false; }); }, { passive: true });
+  addEventListener('resize', onScroll);
+
+  /* ---------- pages: one file, seven pages, with a transition between them ---------- */
+  const main = $('#main'), bar = $('#bar');
+  const pages = $$('.page'), names = pages.map(p => p.dataset.page), once = {};
+  const INIT = { home: build };                  // the puzzle measures its pieces, so it is built when its page is first visible
+  let pending = null, busy = false;
+  const LABELS = { home: 'Home', work: 'Work', 'what-we-do': 'What we do', about: 'About', 'field-notes': 'Field notes', careers: 'Careers', contact: 'Talk to us' };
+  const FX = { home: 'wave', work: 'rows', 'what-we-do': 'wipe', about: 'zip', 'field-notes': 'blinds', careers: 'cross', contact: 'iris' };
+  const show = name => {
+    pages.forEach(p => { p.hidden = p.dataset.page !== name; });
+    const page = pages.find(p => p.dataset.page === name);
+    document.title = page.dataset.title;
+    $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === name));
+    if (INIT[name] && !once[name]) { once[name] = true; INIT[name](); }
+    scrollTo(0, 0);
+    buildRail(page); arm(page); arm(foot);
+    resetPencil(); onScroll();
+    if (pending) { const t = $(pending); pending = null; if (t) setTimeout(() => t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), 80); }
+  };
+  const pageOf = hash => { const m = /^#\/([\w-]+)/.exec(hash || ''); return m && names.includes(m[1]) ? m[1] : 'home'; };
+  addEventListener('popstate', () => show(pageOf(location.hash)));
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#/"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    if (a.dataset.then) pending = a.dataset.then;
+    const name = pageOf(a.getAttribute('href'));
+    try { history.pushState(null, '', '#/' + name); } catch (err) {}
+    setMenu(false);
+    if (reduced) { show(name); return; }
+    if (busy) return;
+    busy = true;
+    // the screen fades to night, the mark draws itself, the page swaps behind it, then it fades back
+    const pt = $('#pt');
+    pt.classList.add('on');
+    setTimeout(() => { show(name); }, 340);
+    setTimeout(() => { pt.classList.remove('on'); }, 820);
+    setTimeout(() => { busy = false; }, 1150);
+  });
+
+  /* ---------- cursor: a dot that tracks the mouse and a ring that trails it ---------- */
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const dot = $('#curDot'), ring = $('#curRing');
+    let cx = -100, cy = -100, rx = -100, ry = -100, live = false;
+    const HOT = 'a, button, summary, label, input, textarea, select, .dpencil, .pz-piece, .v-stage';
+    document.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch') return;
+      cx = e.clientX; cy = e.clientY;
+      if (!live) { live = true; rx = cx; ry = cy; document.documentElement.classList.add('has-cur'); }
+      ring.classList.toggle('hot', !!(e.target.closest && e.target.closest(HOT)));
+    }, { passive: true });
+    document.addEventListener('pointerdown', () => ring.classList.add('down'));
+    document.addEventListener('pointerup', () => ring.classList.remove('down'));
+    document.documentElement.addEventListener('pointerleave', () => { document.documentElement.classList.remove('has-cur'); live = false; });
+    const tick = () => {
+      rx += (cx - rx) * (reduced ? 1 : 0.18); ry += (cy - ry) * (reduced ? 1 : 0.18);
+      dot.style.transform = `translate(${cx}px,${cy}px)`;
+      ring.style.transform = `translate(${rx}px,${ry}px)`;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  $$('[data-scroll]').forEach(b => b.addEventListener('click', () => { const t = $(b.dataset.scroll); if (t) t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }));
+  show(pageOf(location.hash));
+
+  /* ---------- contact form (front-end only: connect to a backend before launch) ---------- */
+  const form = $('#form'), msg = $('#formMsg');
+  $('#files').addEventListener('change', e => {
+    const n = e.target.files.length;
+    $('#dropText').textContent = n ? [...e.target.files].map(f => f.name).join(', ') : 'Drop drawings, specs or your standards here, or click to choose files';
+  });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { msg.textContent = 'Please add your name, company and a valid work email.'; return; }
+    msg.textContent = 'This form isn’t connected yet, so nothing was sent.';
+  });
+})();
+</script>
+</body>
+</html>
